@@ -1,3 +1,4 @@
+# FXV management system
 
 ## [Live System (Beta)](https://www.fxv.co.nz/).
 
@@ -23,27 +24,30 @@ Due to the system hosted on a testing server, not ready for commercial as curren
 
 ## Running Environment
 
-###### Requirements:
+## Requirements:
+
 ###### Runtime requirements: APS.Net Core 2.2
 ###### OS: Windows Server or Linux based OS
 
-###### Step 1:
+## Step 1:
+
 ###### Download project via gitbub
 
-###### Step 2:
+## Step 2:
+
 ###### On server:
 ###### Complile/Publish entire system, and upload to server.
 ###### Local server:
 ###### Open the project on Visual studio, or other compatible IDE
 
-###### Step 3:
+## Step 3:
 
 ###### Database update
 ###### Hint: project contains all migration files, only need to update database.
 ###### CLI: dotnet ef database update
 ###### Visual studio: Update-Database
 
-Step 4:
+## Step 4:
 ###### Runs the application in development mode.
 ###### Browse https://localhost:5001 to view the system.
 
