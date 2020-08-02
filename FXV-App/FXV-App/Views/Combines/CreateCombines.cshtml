@@ -1,0 +1,157 @@
+﻿@model FXV.ViewModels.CombineBuilder
+
+@{
+}
+
+<style>
+    #search_test_category_popup {
+        position: fixed;
+        top: 40%;
+        right: 0;
+        bottom: 40%;
+        left: 0;
+        z-index: 1050;
+        display: none;
+        outline: 0;
+    }
+</style>
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update Combine information...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="...">
+    </div>
+</div>
+<div id="search_test_category_popup" class="container-fluid row">
+    <div class="card col-4 offset-4 text-center" id="page-info" data-page-from-Controller="Combines" data-page-from-Action="Combines">
+        <span id="close" class="close text-right pt-2">×</span>
+        <h5 class="card-header text-white">Search Test Category</h5>
+        <form class="card-body row">
+            <input autocomplete="off" id="category" class="col-8 offset-2" onkeyup="input_onkeyup(this,'SearchCategory')" onfocus="input_onfocus(this)" onfocusout="input_onfocusout(this)" />
+            <ul class="border border-dark col-8 offset-2 bg-light" hidden="hidden">
+            </ul>
+        </form>
+        <div class="text-center mt-4 mb-3">
+            <div class="btn btn-light" onclick="confirm_category()">ok</div>
+        </div>
+    </div>
+</div>
+<div class="content p-0 mt-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Create Combine</h2>
+                    </div>
+                    <form id="CreateCombines" class="card-body col-12 row" asp-action="CreateCombines" asp-controller="Home" method="post" enctype="multipart/form-data">
+                        <div class="col-12 col-xl-7 row">
+                            <span id="formError" class="text-danger validation-summary-errors"></span>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group col-12">
+                                <label asp-for="Name" class="control-label text-white"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Combine Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Description" class="control-label text-white"></label>
+                                <input asp-for="Description" class="form-control" placeholder="Description" multiple />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Gender" class="control-label text-white"></label>
+                                <select asp-for="Gender" class="form-control" onchange="removeAllTestsOnGenderChanged()">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-12 row ml-0 mr-0 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <div class="card col-12 p-3">
+                                        <label class="control-label text-white">Category</label>
+                                        <div class="row ml-1 mr-1" id="select_categories">
+                                            @if (@ViewBag.Cate != null)
+                                            {
+                                                @foreach (var x in @ViewBag.Cate)
+                                                {
+                                                    <a id="@x.Category" class="col-2 text-center btn btn-light" onclick="display_Test_Block('@x.Category')">
+                                                        @x.Category<span id="weightPercent" class="pl-1 text-white">@x.Weight%</span>
+                                                    </a>
+                                                }
+                                            }
+                                            <div class="btn btn-light text-capitalize col-1 pl-1 pr-1 text-center text-center" onclick="addCategory()">
+                                                <a href="javascript:void(0)">
+                                                    Add<i class="material-icons">
+                                                        add
+                                                    </i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div id="test_block">
+                                            @if (@ViewBag.Cate != null)
+                                            {
+                                                @foreach (var x in @ViewBag.Cate)
+                                                {
+                                                    <div id="tests_block_@x.Category" style="display:none" class="col-12 mt-4">
+                                                        <label id="category_title" class="control-label text-white pl-3">
+                                                            <div class="row mb-1">
+                                                                <h5 class="mb-0 mr-4">@x.Category</h5>
+                                                                <input autocomplete="off" type="number" class="mr-1" placeholder="Weight" onchange="checkWeightOnEach(this)" value="@x.Weight">
+                                                                <span class="row pl-4">%</span>
+                                                            </div>
+                                                            <a>(Please select Tests from the drop down list)</a>
+                                                        </label>
+                                                        <table id="select_tests" class="container-fluid">
+                                                            <tbody>
+                                                                @for (int y = 0; y < x.Tests.Count; y++)
+                                                                {
+                                                                    <tr class="row pb-2 text-center">
+                                                                        <td class="col-8">
+                                                                            <input autocomplete="off" value="@x.Tests[y].Name" id="Tests_0_Name" class="w-100" name="Tests[0].Name" type="text" onkeyup="input_onkeyup(this,'SearchTests','@x.Category')" onfocus="input_onfocus(this)" onfocusout="input_onfocusout(this)" placeholder="Search tests by name">
+                                                                            <ul class="border border-dark col-12 list-group p-0" hidden="hidden">
+                                                                            </ul>
+                                                                            <div hidden="">
+                                                                                <input id="Tests_0__Test_ID" name="Tests[0].Test_ID" value="@x.Tests[y].Test_ID" readonly hidden>
+                                                                                <input id="Tests_0__Test_Name" name="Tests[0].Test_Name" value="@x.Tests[y].Name" readonly hidden>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="col-4">
+                                                                            <a href="javascript:void(0)" onclick="removeTests(this,'@x.Category')">Remove</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <div id="addTests" style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addTest('@x.Category')">
+                                                            <a href="javascript:void(0)">
+                                                                Add Tests<i class="material-icons">add</i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="combineImg" class="w-100" src="/sources/img/combineImg.png" style="object-fit: contain;" alt="..."/>
+                            <div class="pt-2 row">
+                                <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Combine Image</h3>
+                                <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="submit(@ViewData["Event_ID"])">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/combineBuilderHandler.js"></script>
+<script src="../sources/js/input_search.js"></script>

@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+}
+<style>
+    table > tbody > tr > td {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+</style>
+@Html.Partial("_Loading")
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+    <div class="container-fluid">
+        <div class="row w-100">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header p-0 card-header-secondary pb-4 row">
+                                        <h2 class="medium-bold card-title text-FXV col-12">All Users</h2>
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                                        {
+                                            <div class="col-12">
+                                                <div class="nav justify-content-end">
+                                                    <div>
+                                                        <div class="dropdown-toggle btn btn-light text-capitalize" type="button" id="ReadUsersWithCombineList" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Add New Users With Combine From File<i class="material-icons">
+                                                                add
+                                                            </i>
+                                                        </div>
+                                                        <form class="dropdown-menu pl-2 pt-3 row" aria-labelledby="ReadUsersWithCombineList" id="SystemUsersWithCombineThruFile" data-stopPropagation="true">
+                                                            <h5 class="text-body col-12"><strong>Please Select file</strong></h5>
+                                                            <input class="col-12" type="file" id="fileWithCombine" name="fileWithCombine" onchange="fileCheckWithCombine(this)">
+                                                            <input class="ml-3 mt-3" type="checkbox" id="signToOrgWithCombine" onchange="signingToOrgWithCombine(this)">
+                                                            <span><strong>Assign To an Organization?</strong></span>
+                                                            <div id="org_list_with_combine" class="col-8 pt-2" hidden disabled>
+                                                                <label class="text-dark">Organizations:</label>
+                                                                <select class="col-7" id="organizationWithCombine">
+                                                                </select>
+                                                                <div>
+                                                                    <input class="ml-0 mt-3" type="checkbox" id="signToTeamWithCombine" onchange="signingToTeamWithCombine(this)">
+                                                                    <span><strong>Assign To a Team?</strong></span>
+                                                                    <div id="team_list_with_combine" class="col-12 pt-2 pl-0" hidden disabled>
+                                                                        <label class="text-dark">Teams:</label>
+                                                                        <select class="col-7" id="teamsWithCombine">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12 text-right">
+                                                                <a id="userWithCombineListFileSubmit" onclick="UserWithCombineListFileSubmit()" style="pointer-events: none;" class="btn btn-secondary">OK</a>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div>
+                                                        <div class="dropdown-toggle btn btn-light text-capitalize" type="button" id="ReadUsersList" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Add New Users From File<i class="material-icons">
+                                                                add
+                                                            </i>
+                                                        </div>
+                                                        <form class="dropdown-menu pl-2 pt-3 row" aria-labelledby="ReadUsersList" id="SystemUsersThruFile" data-stopPropagation="true">
+                                                            <h5 class="text-body col-12"><strong>Please Select file</strong></h5>
+                                                            <input class="col-12" type="file" id="file" name="file" onchange="fileCheck(this)">
+                                                            <input class="ml-3 mt-3" type="checkbox" id="signToOrg" onchange="signingToOrg(this)">
+                                                            <span><strong>Signing To an Organization?</strong></span>
+                                                            <div id="org_list" class="col-8 pt-2" hidden disabled>
+                                                                <label class="text-dark">Organizations:</label>
+                                                                <select class="col-7" id="organization">
+                                                                </select>
+                                                                <div>
+                                                                    <input class="ml-0 mt-3" type="checkbox" id="signToTeam" onchange="signingToTeam(this)">
+                                                                    <span><strong>Signing To a Team?</strong></span>
+                                                                    <div id="team_list" class="col-12 pt-2 pl-0" hidden disabled>
+                                                                        <label class="text-dark">Teams:</label>
+                                                                        <select class="col-7" id="teams">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12 text-right">
+                                                                <a id="userListFileSubmit" onclick="UserListFileSubmit()" style="pointer-events: none;" class="btn btn-secondary">OK</a>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <h5 class="btn btn-light text-capitalize" onclick="createSystemUsers()">
+                                                        Add New User<i class="material-icons">
+                                                            add
+                                                        </i>
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div id="loaded-users-list" class="col-12" style="height: 100vh;">
+                                        <table class="table table-borderless text-center">
+                                            <thead>
+                                                <tr style="background-color:black;">
+                                                    <th class="border-0" scope="col">First Name</th>
+                                                    <th class="border-0" scope="col">Lastname</th>
+                                                    <th class="border-0" scope="col">Gender</th>
+                                                    <th class="border-0" scope="col">Address</th>
+                                                    <th class="border-0" scope="col">City</th>
+                                                    <th class="border-0" scope="col">Email</th>
+                                                    <th class="border-0" scope="col">Mobile</th>
+                                                    <th class="border-0" scope="col">Activated</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <p id="more" style="cursor: pointer" class="text-center text-white">More...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../sources/js/usersListHandler.js"></script>
+

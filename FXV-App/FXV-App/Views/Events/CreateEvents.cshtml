@@ -1,0 +1,114 @@
+﻿@model FXV.ViewModels.EventBuilder
+
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update Event information...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Events" data-page-from-Action="Events">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Create Event</h2>
+                    </div>
+                    <input id="Gender" hidden />
+                    <form id="CreateEvents" class="card-body col-12 row" asp-action="CreateEvents" asp-controller="Home" method="post" enctype="multipart/form-data">
+                        <div class="col-12 col-xl-7 row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group col-12">
+                                <label asp-for="Name" class="control-label text-white"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Event Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Location" class="control-label text-white"></label>
+                                <input asp-for="Location" class="form-control" placeholder="Location" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Date" class="control-label text-white"></label>
+                                <input asp-for="Date" type="date" class="form-control" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Time" class="control-label text-white"></label>
+                                <input asp-for="Time" type="time" class="form-control" />
+                                <span asp-validation-for="Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Description" class="control-label text-white"></label>
+                                <input asp-for="Description" class="form-control" placeholder="Description" multiple />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="col-12 row ml-0 mr-0 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <label class="control-label text-white">Combine Name (Please select from the drop down list)</label>
+                                    <input autocomplete="off" asp-for="Combine.Name" class="form-control" onchange="removeAllAttendeesOnGenderChanged()" placeholder="Combine Name" onkeyup="input_onkeyup(this,'SearchCombines')" onfocus="input_onfocus(this)" onfocusout="input_onfocusout(this)" />
+                                    <span asp-validation-for="Combine" class="text-danger"></span>
+                                    <ul class="border border-dark col-6 list-group p-0" hidden></ul>
+                                    <div hidden>
+                                        <input asp-for="Combine.C_ID" hidden />
+                                    </div>
+                                </div>
+                                <div class="form-group col-12">
+                                    <div class="card p-3">
+                                        <label class="control-label text-white">Attendees (Please select from the drop down list)</label>
+                                        <table id="attendees-area">
+                                            <tbody>
+                                                @if (Model != null)
+                                                {
+                                                    foreach (var x in Model.Attendees)
+                                                    {
+                                                        <tr class="row pb-2">
+                                                            <td class="col-8">
+                                                                <input autocomplete="off" id="Attendees_0_FullName" class="w-100" name="Attendees[0].FullName" type="text" value="@x.FullName" onkeyup="input_onkeyup(this,'SearchUsers')" onfocus="input_onfocus(this)" onfocusout="input_onfocusout(this)" placeholder="Search athlete by name">
+                                                                <ul class="border border-dark col-12 list-group p-0" hidden="hidden">
+                                                                </ul>
+                                                                <div hidden="">
+                                                                    <input id="Attendees_0__Id" name="Attendees[0].Id" value="@x.Id" readonly hidden />
+                                                                </div>
+                                                            </td>
+                                                            <td class="col-4">
+                                                                <a href="javascript:void(0)" onclick="removeAttendees(this)">Remove</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                        <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addAttendees()">
+                                            <a href="javascript:void(0)">
+                                                Assign Attendees<i class="material-icons">
+                                                    add
+                                                </i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="eventImg" class="w-100" src="/sources/img/testImg.png" style="object-fit: contain;" alt=""/>
+                            <div class="pt-2 row">
+                                <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Event Image</h3>
+                                <input asp-for="Image" type="file" class="col-12 ml-2" name="Image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="submit()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../sources/js/eventBuilderHandler.js"></script>
+<script src="../sources/js/input_search.js"></script>

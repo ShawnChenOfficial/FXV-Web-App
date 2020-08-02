@@ -1,0 +1,608 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+    List<string> monthNames = new List<string>(){"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+}
+<!--Events-->
+<style>
+
+
+
+
+
+
+    .menu-divider-vertical {
+        position: relative;
+        top: 4.7px;
+    }
+
+    .list {
+    }
+
+    .list-item-arrow-down {
+        font-size: 2.5rem;
+        cursor: pointer;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 5px) rotate(0deg);
+        transition: transform 0.2s cubic-bezier(0.1, 0.4, 0.6, 1);
+    }
+
+    .list-item-arrow-up {
+        font-size: 2.5rem;
+        cursor: pointer;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 5px) rotate(180deg);
+        transition: transform 0.5s cubic-bezier(0.1, 0.4, 0.6, 1);
+    }
+
+    .list-item {
+        border: 1px #212121 solid;
+        position: relative;
+        border-radius: 15px;
+        background-color: rgba(33,33,33,0.7);
+        margin-top: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+        padding: 0 1rem 0 1rem !important;
+    }
+
+        .list-item:hover {
+            box-shadow: 2px 2px 10px #B59E04;
+            animation: list-item-shadow 0.3s linear;
+        }
+
+    @@keyframes list-item-shadow {
+        0% {
+            box-shadow: 0px 0px 0px #B59E04;
+        }
+
+        50% {
+            box-shadow: 1px 1px 5px #B59E04;
+        }
+
+        100% {
+            box-shadow: 2px 2px 10px #B59E04;
+        }
+    }
+
+    @@media(min-width:768px) {
+        .list-item-img-block img {
+            max-width: 145px !important;
+            max-height: 88px !important;
+            --width: calc(100vw * 0.1);
+            height: calc(var(--width) * 0.6);
+            width: var(--width) !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+    }
+
+    @@media(max-width:767px) {
+        .list-item-img-block img {
+            max-width: unset !important;
+            max-height: unset !important;
+            --width: calc(100vw * 0.23);
+            height: calc(var(--width) * 0.6);
+            width: var(--width) !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+    }
+
+    @@media(max-width:767px) {
+        .col-md-show {
+            display: none;
+        }
+
+        .col-md-hide {
+            display: block;
+        }
+
+        .list-item-img-block {
+            display: none;
+        }
+    }
+
+    @@media(min-width:768px) {
+        .col-md-show {
+            display: block;
+        }
+
+        .col-md-hide {
+            display: none;
+        }
+
+        .list-item-img-block {
+            display: block;
+        }
+    }
+
+    @@media(max-width:575px) {
+        .list-item-category-block {
+            display: none;
+        }
+
+        .list-item-block-sm-hide {
+            display: none;
+        }
+
+        .list-item-block-sm-show {
+            display: block;
+        }
+    }
+
+    @@media(min-width:576px) {
+        .list-item-category-block {
+            display: block;
+        }
+
+        .list-item-block-sm-hide {
+            display: block;
+        }
+
+        .list-item-block-sm-show {
+            display: none;
+        }
+    }
+
+    @@media(min-width:768px) {
+
+        .list-item-block-md-hide {
+            display: none;
+        }
+
+        .list-item-block-md-show {
+            display: block;
+        }
+    }
+
+    @@media(max-width:767px) {
+
+        .list-item-block-md-hide {
+            display: block;
+        }
+
+        .list-item-block-md-show {
+            display: none;
+        }
+    }
+
+    .list-item-expend {
+        height: auto;
+        transform: scaleY(1);
+        transition: transform 0.5s cubic-bezier(0.1, 0.4, 0.6, 1);
+    }
+
+    .list-item-expend-hide {
+        transform: scaleY(0);
+        transition: transform 0s cubic-bezier(0.1, 0.4, 0.6, 1);
+        max-height: 0;
+    }
+
+    .promiex {
+        border: 2px solid #C2C2C6;
+        width: 145px;
+        height: max-content;
+        border-radius: 15px;
+        margin: auto;
+    }
+
+    .promiex-score {
+        color: #C2C2C6;
+    }
+
+    .promiex-profile-img {
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+        margin: auto;
+        border-radius: 3rem;
+        height: 3.5rem;
+        width: 3.5rem;
+    }
+
+    .bronze {
+        border: 2px solid #EEAF42;
+        width: 145px;
+        height: max-content;
+        border-radius: 15px;
+        margin: auto;
+    }
+
+    .bronze-score {
+        color: #EEAF42;
+    }
+
+    .bronze-profile-img {
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+        margin: auto;
+        border-radius: 3rem;
+        height: 3.5rem;
+        width: 3.5rem;
+    }
+
+
+    .topAthlete {
+        border: 2px solid #FFDD00;
+        width: 170px;
+        height: max-content;
+        border-radius: 20px;
+        margin: auto;
+    }
+
+    .topAthlete-score {
+        color: #FFDD00;
+    }
+
+    .topAthlete-profile-img {
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+        margin: auto;
+        border-radius: 3rem;
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .display-inline-flex {
+        display: inline-flex;
+    }
+
+        .display-inline-flex .promiex, .display-inline-flex .bronze, .display-inline-flex .topAthlete {
+            border-radius: 10px;
+        }
+
+    .male-icon {
+        background-image: url(/sources/img/male.png);
+        width: 20px;
+        height: 20px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: inline-block;
+    }
+
+    .male-icon-large {
+        background-image: url(/sources/img/male.png);
+        width: 30px;
+        height: 30px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: inline-block;
+    }
+
+    .female-icon {
+        background-image: url(/sources/img/female.png);
+        width: 20px;
+        height: 20px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: inline-block;
+    }
+
+    .female-icon-large {
+        background-image: url(/sources/img/female.png);
+        width: 30px;
+        height: 30px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: inline-block;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    .text-event-pending {
+        color: #6DFD30;
+    }
+
+    .text-event-started {
+        color: #FF0000;
+    }
+
+    .text-event-closed {
+        color: #B2B2B2;
+    }
+
+    .carousel-caption {
+        bottom: 0 !important;
+    }
+
+    .carousel-item {
+        width: 60%;
+        margin-left: 20%;
+    }
+
+        .carousel-item img {
+            --width: 57vw;
+            height: calc(var(--width) * 0.6) !important;
+            width: var(--width) !important;
+        }
+
+    .slider-to-right {
+        right: -5px;
+    }
+</style>
+<div id="deleteConfirmPopUp" class="modal">
+    <!-- Modal content -->
+    <fieldset class="mt-5 col-10 offset-1">
+        <legend class="text-FXV text-center w-auto font-2rem medium-bold-400">Delete</legend>
+        <h3 class="text-FXV medium-bold-400 text-center pt-2 pb-5">Are you sure?</h3>
+        <div class="mb-4 text-center text-capitalize">
+            <button class="btn btn-outline-secondary mr-5 medium-bold-400" id="deleteConfirm">Yes</button>
+            <button class="btn btn-outline-secondary ml-5 medium-bold-400" id="deleteCancel">No,Take me back</button>
+        </div>
+    </fieldset>
+</div>
+<div class="content p-0 mt-3">
+    <div class="container-fluid pb-2 list-item-block-md-show">
+        <h2 class="medium-bold text-center font-weight-bold text-FXV mb-5">Upcoming Events</h2>
+        <div id="eventSliders" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/Nov_design_notes.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/bg_login.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/Logo.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#eventSliders" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#eventSliders" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+    <div class="container pb-5">
+        <h3 class="medium-bold text-left font-weight-bold text-white">All Events</h3>
+        <div id="combine-menu" class="row container">
+            <div class="mt-1">
+                <input v-on:keyup="Search()" placeholder="Search Name..." />
+            </div>
+            <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+            <div class="mt-1">
+                <label>Start</label>
+                <input class="mr-2" type="date" v-on:keyup="Search()" placeholder="Start Date..." />
+            </div>
+            <div class="mt-1">
+                <label>End</label>
+                <input type="date" v-on:keyup="Search()" placeholder="End Date..." />
+            </div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+            {
+                <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                <div>
+                    <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddCombine()">Add</a>
+                </div>
+            }
+        </div>
+        <div class="mt-4 list" id="list">
+            <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="hasMore && LoadMore()">More</p>
+        </div>
+    </div>
+</div>
+<script type="text/template" id="list-item-templete">
+    <div class="list-item" id="tag-test-//EventId//">
+        <div class="row">
+            <div class="col-lg-2 col-md-3 col-0 list-item-img-block">
+                <img src="//ImgPath//" />
+            </div>
+            <div class="col-lg-8 offset-lg-0 col-md-7 offset-md-0 col-sm-8 offset-sm-1 col-12 offset-0 pb-2">
+                <h3 class="text-FXV mt-2">//Name//</h3>
+                <div class="row text-white">
+                    <p class="col-12 mb-2">
+                        <span class="material-icons mr-1" style="float:left;line-height: 19px;font-size: 19px;">
+                            location_on
+                        </span> //Location//
+                    </p>
+                    <p class="col-xl-3 col-lg-4 col-md-6 col-sm-7 col-12">
+                        <span class="text-muted">
+                            Date:
+                        </span> //Date//
+                    </p>
+                    <p class="col-xl-3 col-lg-4 col-md-6 col-sm-5 col-12">
+                        <span class="text-muted">
+                            Time:
+                        </span> //Time//
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-3 col-12 text-right medium-bold text-FXV list-item-block-sm-hide">
+                <p class="text-muted mt-2"><span class="text-FXV font-x-large medium-bold-400">//Registered//</span> Registered</p>
+                <p class="font-weight-bold font-x-large //Status-CSS//">//Status//</p>
+            </div>
+            <div class="col-12 medium-bold text-FXV list-item-block-sm-show pb-4">
+                <p class="font-weight-bold font-x-large //Status-CSS//">//Status//</p>
+            </div>
+        </div>
+        <div class="list-item-expend list-item-expend-hide pl-5 pr-5">
+            <div class="border-top w-100 pb-2"></div>
+            <p class="m-auto text-center text-white pt-3 pointer pb-5">Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="" /></p>
+        </div>
+        <span class="material-icons text-white list-item-arrow-down" onclick="expendSectionSwitcher($(this),'//EventId//')">
+            keyboard_arrow_down
+        </span>
+    </div>
+</script>
+<script type="text/template" id="list-item-extension-templete">
+    <div class="row">
+        <div class="border-top w-100 pb-2"></div>
+        <!--specification-->
+        <div class="col-12 pb-4 text-center text-white ml-0 mr-0 pl-0 pr-0">
+            <div class="row col-12 text-left pb-2 ml-0 mr-0 pl-0 pr-0 text-center">
+                <p class="col-12 text-muted mt-4">Combine: <span class="text-white font-x-large font-weight-bold medium-bold-400">//CombineName//</span></p>
+            </div>
+        </div>
+    </div>
+</script>
+<script>var vueEventList = new Vue({
+        el: "#list",
+        data: {
+            last_id: 0,
+            num: 10,
+            url: '',
+            hasMore: true,
+        },
+        mounted() {
+            this.LoadMore();
+        },
+        computed: {
+
+        },
+        methods: {
+            Freshable: function () {
+                return this.hasMore;
+            },
+            LoadMore: function () {
+
+                $('#more').html('Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt=""/>');
+
+                for (var x = 0; x < 3; x++) {
+                    var html = $('#list-item-templete').html()
+                        .replace(/\/\/EventId\/\//g, 3)
+                        .replace('//Name//', 'A Real Event')
+                        .replace('//ImgPath//', '/sources/combineImg/combine-img-null.png')
+                        .replace('//Location//', '123 Tay Street, Invercargill')
+                        .replace('//Date//', '12 Dec, 2020')
+                        .replace('//Time//', '9:00 am')
+                        .replace('//Registered//', 32);
+
+
+                    if (x == 0) {
+                        $(html.replace(/\/\/Status\/\//g, 'Pending').replace(/\/\/Status-CSS\/\//g, 'text-event-pending')).insertBefore("#more");
+                    }
+                    else if (x == 1) {
+                        $(html.replace(/\/\/Status\/\//g, 'Started').replace(/\/\/Status-CSS\/\//g, 'text-event-started')).insertBefore("#more");
+                    }
+                    else if (x == 2) {
+                        $(html.replace(/\/\/Status\/\//g, 'Closed').replace(/\/\/Status-CSS\/\//g, 'text-event-closed')).insertBefore("#more");
+                    }
+
+
+                }
+
+                if (true) {
+                    $('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
+                    vueEventList.hasMore = false;
+                }
+                else {
+                    $('#more').removeAttr('disabled').removeClass('text-muted').addClass('text-white').html("More...");
+                    vueEventList.hasMore = true;
+                }
+
+            }
+        }
+    });
+
+    function expendSectionSwitcher(obj, combine_id) {
+
+        if ($(obj).hasClass('list-item-arrow-down')) {
+
+            $('.list-item-arrow-up').removeClass('list-item-arrow-up').addClass('list-item-arrow-down')
+            $(obj).addClass('list-item-arrow-up').removeClass('list-item-arrow-down');
+            $('.list-item-expend').addClass('list-item-expend-hide');
+            $(obj).parent().find('.list-item-expend').removeClass('list-item-expend-hide');
+
+
+            var htmlString = $('#list-item-extension-templete').html().toString().replace('//CombineName//', "Pure Combine Female");
+
+            $(obj).parent().find('.list-item-expend').html(htmlString);
+
+
+        }
+        else if ($(obj).hasClass('list-item-arrow-up')) {
+            $(obj).addClass('list-item-arrow-down').removeClass('list-item-arrow-up');
+            $(obj).parent().find('.list-item-expend').addClass('list-item-expend-hide');
+        }
+    }
+
+    function deleteListItem(id, tag) {
+        $('#deleteConfirmPopUp').css('display', 'block');
+        $('#deleteConfirm').attr('onclick', 'deleteConfirmed(' + id + ',\'' + tag + '\')');
+        $('#deleteCancel').on('click', function () {
+            $('#deleteConfirmPopUp').css('display', 'none');
+            $('#deleteConfirm').removeAttr('onclick');
+        });
+    };
+
+    function deleteConfirmed(id, tag) {
+
+        $('#loading-panel').removeAttr('hidden');
+
+
+        $('#loading-panel').attr('hidden', 'hidden');
+    }
+
+    function editCombine(c_id) {
+
+        $('#loading-panel').removeAttr('hidden');
+
+        $('#loading-panel').attr('hidden', 'hidden');
+    }</script>

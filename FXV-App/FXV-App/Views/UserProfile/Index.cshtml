@@ -1,0 +1,125 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model FXV.ViewModels.NewModels.ViewModel_UserProfile
+@{
+}
+<!--UserProfileIndex-->
+<style>
+    @@media(min-width:1200px) {
+        .profile-img-block {
+            position: absolute;
+            right: 0%;
+            left: 20%;
+            top: 10%;
+        }
+    }
+    @@media(max-width:1199px) {
+        .profile-img-block {
+            position: absolute;
+            right: 0%;
+            left: 40%;
+            top: 10%;
+        }
+    }
+    @@media(max-width:767px) {
+        .profile-img-block {
+            padding-top: 1rem;
+            position: inherit;
+        }
+    }
+</style>
+<div class="container">
+    <div class="row pb-5">
+        <div class="col-12 col-md-6 m-auto profile-img-block text-center pb-5" id="profile-menu" data-uid="@Model.Id">
+            <div class="profile-img m-auto round-circle"></div>
+            @if (Model.Editable)
+            {
+                <a class="btn btn-secondary mt-4 text-capitalize" style="z-index:999" href="javascript:void(0)" v-on:click="Edit()">Edit Profile</a>
+            }
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="medium-bold-400 user-profile-username text-white">@Model.FirstName @Model.LastName</h2>
+                    <p class="text-white">
+                        @Model.Description
+                    </p>
+                </div>
+                <div class="col-10 col-sm-8 row">
+                    <div class="text-center col-5">
+                        @if (Model.Gender == "Male")
+                        {
+                            <span class="male-icon-large w-100"></span>
+                        }
+                        @if (Model.Gender == "Female")
+                        {
+                            <span class="female-icon-large w-100"></span>
+                        }
+                        <p class="text-muted mb-0">Gender</p>
+                    </div><div class="text-center col-5">
+                        <p class="text-FXV medium-bold-400 m-0 profile-age">
+                            @Model.Age
+                        </p>
+                        <p class="text-muted mb-0">Age</p>
+                    </div>
+                    <div class="yellow-divider-bottom mt-1 col-9 offset-1"></div>
+                </div>
+                <div class="col-12 row pt-4">
+                    <p class="text-muted col-12 col-sm-3">Nationality: </p>
+                    <p class="text-white col-12 col-sm-9 medium-bold-400">@Model.Nationality</p>
+                    <p class="text-muted col-12 col-sm-3">Location:</p>
+                    <p class="text-white col-12 col-sm-9 medium-bold-400">@Model.City</p>
+                    <p class="text-muted col-12 col-sm-3">Email:</p>
+                    <p class="text-white col-12 col-sm-9 medium-bold-400">@Model.Email</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="text-FXV medium-bold-400">Top Achievement</h3>
+            <div class="ml-3 text-white">
+                <p>@Model.TopAchevenment</p>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="text-FXV medium-bold-400">Biology</h3>
+            <div class="row" id="biology">
+                <div class="col-12 col-md-4 mt-3">
+                    <p v-bind:class="{'m-auto text-center text-white pt-3': true, 'display-none': statistics_loaded}">Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="" /></p>
+                    <div is="athlete_biology" v-for="list in lists" v-bind:key="list.id" v-bind:height="list.height"
+                         v-bind:weight="list.weight" v-bind:wingspan="list.wingspan"
+                         v-bind:handspan="list.handspan" v-bind:standingreach="list.standingreach" v-bind:dominanthand="list.dominanthand"></div>
+                </div>
+                <div class="col-12 col-md-8 pt-3 mt-5">
+                    <canvas id="performanceDiagram" class="" width="1280"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="text-FXV medium-bold-400">Scores</h3>
+            <div class=" ml-3 text-white row">
+                <div class="col-12 col-md-8 col-lg-6" id="combine-records">
+                    <p v-bind:class="{'m-auto text-center text-white pt-3':true, 'display-none': combine_records_loaded}">Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="" /></p>
+                    <div class="row" is="combine-records" v-for="list in lists" v-bind:key="list.id" v-bind:tests="list.tests"
+                         v-bind:bestattempt="list.bestattempt" v-bind:rank="list.rank" v-bind:combine_name="list.combine_name"
+                         v-bind:topscore="list.topscore" v-on:hover="ShowTests()"></div>
+                    <p v-bind:class="{'m-auto text-left text-muted':true, 'display-none': !no_combine_record}">No organization has been assigned</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="text-FXV medium-bold-400">Organizations & Teams</h3>
+            <div class=" ml-3 text-white row">
+                <div class="col-12" id="athlete_orgs_teams">
+                    <p v-bind:class="{'m-auto text-center text-white pt-3': true, 'display-none': data_loaded}">Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="" /></p>
+                    <p v-bind:class="{'m-auto text-left text-muted':true, 'display-none': has_org }">No record</p>
+                    <div is="athlete_orgs" v-for="list in orgs" v-bind:key="list.id" v-bind:teams="list.teams" v-bind:org="list.org" v-bind:hasteam="list.hasteam">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/chartjs@v2.8.0/chartjs.js"></script>
+<script src="/sources/js/chartjs@v2.8.0/chartjs_util.js"></script>
+<script src="/sources/js/userPfrofilePageHandler.js"></script>

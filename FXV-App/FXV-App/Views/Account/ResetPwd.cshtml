@@ -1,0 +1,37 @@
+﻿@model FXV.ViewModels.ResetPwdAccount
+@{
+    Layout = "_Login";
+}
+
+@Html.Partial("_Loading")
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2">
+            <form class="w-100 show bg-transparent form-group" asp-action="SendResetLink">
+                <div class="form-group text-white">
+                    <h3>
+                        Reset your password
+                    </h3>
+                </div>
+                <span class="text-danger">@TempData["ErrorMsg"]</span>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label text-white"></label>
+                    <div class="w-100">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <ion-icon name="person"></ion-icon>
+                                </div>
+                            </div>
+                            <input asp-for="Email" class="form-control pl-2" placeholder="Your Account" />
+                        </div>
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <button id="submit" type="submit" class="btn btn-warning-customized float-right">Send me a password reset link</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_AccountLoadingScript")

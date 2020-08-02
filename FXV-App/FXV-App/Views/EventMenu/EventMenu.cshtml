@@ -1,0 +1,50 @@
+﻿
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+}
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Events" data-page-from-Action="Events">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title">@TempData["event_name"]</h2>
+                    </div>
+                    <div class="card-body col-12 pb-0 text-white">
+                        <h4>@TempData["event_date"]</h4>
+                        <h4>@TempData["event_time"] Onwards</h4>
+                        <h4><span class="material-icons p-0">room</span>@TempData["event_location"]</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card" style="opacity:0.8">
+                    <div class="row pb-2 m-0">
+                        <div class="card-body col-6 col-xl-3 text-white" style="background-color:rgba(224, 217, 0,0.7) !important">
+                            <h3>Event Combine</h3>
+                            <h4>@TempData["combine_name"]</h4>
+                        </div>
+                        <div class="card-body col-6 col-xl-3 text-white">
+                            <h3>Event Register</h3>
+                            <h4>Manage Attendees</h4>
+                        </div>
+                        <div class="card-body col-6 col-xl-3 text-white"style="background-color:rgba(224, 217, 0,0.7)!important">
+                            <h3>Event Management</h3>
+                            <h4 style="cursor:pointer" onclick="toPublicLeaderBoard(@TempData["event_id"])">Leaderboards</h4>
+                            <h4>Dashboard</h4>
+                            <h4>Event Schedule</h4>
+                        </div>
+                        <div class="card-body col-6 col-xl-3 text-white">
+                            <h3>Testing Stations</h3>
+                            <h4 onclick="toResultCollection(@TempData["event_id"])" style="cursor:pointer">Start Testing</h4>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../sources/js/eventMenuHandler.js"></script>

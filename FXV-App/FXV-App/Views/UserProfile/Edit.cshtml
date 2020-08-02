@@ -1,0 +1,119 @@
+﻿
+@model FXV.ViewModels.UserProfileEdit
+<style>
+    td {
+        padding-top: 5px;
+        padding-bottom: 10px;
+    }
+</style>
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update your profile...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="" data-page-from-Action="">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Update Profile</h2>
+                    </div>
+                    <form id="EditProfile" class="card-body col-12 row" method="post" enctype="multipart/form-data">
+                        <div class="col-12 col-xl-7 row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Id" hidden readonly />
+                            <input asp-for="Profile_Img_Path" hidden readonly />
+                            <input asp-for="RowVersion" hidden readonly value="@Model.RowVersionBase64" />
+                            <div class="form-group col-12">
+                                <label asp-for="FirstName" class="control-label text-white"></label>
+                                <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="LastName" class="control-label text-white"></label>
+                                <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Email" class="control-label text-white"></label>
+                                <input asp-for="Email" class="form-control-disabled" readonly />
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="PhoneNumber" class="control-label text-white"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Gender" class="control-label text-white"></label>
+                                <input asp-for="Gender" class="form-control-disabled" readonly>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Address" class="control-label text-white"></label>
+                                <input asp-for="Address" class="form-control" placeholder="Address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="City" class="control-label text-white"></label>
+                                <input asp-for="City" class="form-control" placeholder="City" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="DOB" class="control-label text-white"></label>
+                                <input asp-for="DOB" class="form-control" placeholder="Date of Birth" />
+                                <span asp-validation-for="DOB" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Nationality_ID" class="control-label text-white"></label>
+                                <select asp-for="Nationality_ID" class="form-control" asp-items="ViewBag.Nationalities">
+                                    <option value="">-- Select Nationality --</option>
+                                </select>
+                                <span asp-validation-for="Nationality_ID" class="text-danger" />
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="AthleteAchievements" class="control-label text-white"></label>
+                                <table id="achievement-area">
+                                    <tbody>
+                                        @foreach (var x in Model.AthleteAchievements)
+                                        {
+                                            <tr>
+                                                <td class="col-12 pl-0">
+                                                    <textarea rows="4" autocomplete="off" id="AthleteAchievements_0" name="AthleteAchievements[0]" class="form-control w-100" placeholder="Type your achievement" value="@x">@x</textarea>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0)" onclick="removeAchievement(this)">Remove</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addAchievement()">
+                                    <a href="javascript:void(0)">
+                                        New Achievement<i class="material-icons">
+                                            add
+                                        </i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="profileImg" class="w-100" src="@Model.Profile_Img_Path" style="object-fit: contain;" alt=""/>
+                            <div class="pt-2 row">
+                                <h3 asp-for="Profile_Image" class="control-label text-white col-12 ml-2">Upload Profile Image</h3>
+                                <input asp-for="Profile_Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Profile_Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="editSubmit()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/userProfileEditHandler.js"></script>

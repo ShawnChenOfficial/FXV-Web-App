@@ -1,0 +1,131 @@
+﻿@model FXV.Models.Event
+
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    var combine = @ViewData["Combine"] as Combine;
+    var now = DateTime.Now;
+    var NotPastEvent = (DateTime.Compare(Model.Date.Date, now.Date) > 0) ? true : ((DateTime.Compare(Model.Date.Date, now.Date) == 0) ? ((TimeSpan.Compare(Model.Time.TimeOfDay, now.TimeOfDay) > 0) ? true : false) : false);
+}
+<!--EventInfo-->
+<div id="combine-popUp" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content card">
+        <span id="close" class="close text-right pt-2">×</span>
+        <div id="details-content" class="row m-0" hidden>
+            <img class="card-img-top" alt="" style="max-height: 340px;
+        min-height: 340px;width:100%;margin:auto;object-fit: contain;">
+            <div class="card-body m-0 pl-0 pr-0 text-white col-8" style="opacity: 1 !important">
+                <h3 class="card-title col-12 text-FXV" id="title"></h3>
+                <p class="card-text col-12 content-font-size" id="description"></p>
+            </div>
+            <div class="card-body m-0 pl-0 pr-0 text-white col-4">
+                <h3 class="card-title col-12 text-FXV">Tests</h3>
+                <div id="combine-tests" class="card-text col-12 content-font-size"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="attendee-popUp" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content card">
+        <span id="attendee-close" class="close text-right pt-2">×</span>
+        <div id="details-content" hidden>
+            <img class="card-img-top" alt="" style="max-height: 340px;
+        min-height: 340px;width:100%;margin:auto;object-fit: contain;">
+            <div class="card-body m-0 pl-0 pr-0 text-white col-12 row" style="opacity: 1 !important">
+                <h3 class="card-title col-12 text-FXV" id="name"></h3>
+                <p class="card-text col-12 content-font-size" id="gender"></p>
+                <p class="card-text col-12 content-font-size" id="age"></p>
+                <div class="col-12 card-text">
+                    <div class="col-12 text-right">
+                        <a id="getAttendeeInfo" class="pr-0" style="cursor:pointer">See Profile<span class="material-icons p-0">info</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="deleteConfirmPopUp" class="modal">
+    <!-- Modal content -->
+    <fieldset class="mt-5 col-10 offset-1">
+        <legend class="text-FXV text-center w-auto font-2rem medium-bold-400">Remove Attendee</legend>
+        <h3 class="text-FXV medium-bold-400 text-center pt-2 pb-5">Are you sure?</h3>
+        <div class="mb-4 text-center">
+            <button class="btn btn-outline-secondary mr-5 medium-bold-400" id="deleteConfirm">Yes</button>
+            <button class="btn btn-outline-secondary ml-5 medium-bold-400" id="deleteCancel">No,Take me back</button>
+        </div>
+    </fieldset>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Events" data-page-from-Action="Events">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-FXV" id="event-id-tag" event_id="@Model.E_ID">@Model.Name</h2>
+                    </div>
+                    <div class="card-body col-12 pb-0 row">
+                        <div class="col-6 col-md-7 col-xl-8 text-white">
+                            <h4><span class="material-icons p-0">room</span>@Model.Location</h4>
+                            <h4>@Model.Date.ToString("dd MMM yyyy")</h4>
+                            <h4>@Model.Time.ToString("hh:mm tt")</h4>
+                            <h4>@Model.Description</h4>
+                        </div>
+                        <div class="col-6 col-md-5 col-xl-4">
+                            <img src="@Model.Img_Path" style="width:100%;height:300px;object-fit: contain;" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header p-0 card-header-secondary pb-4 row">
+                    <h2 class="medium-bold card-title text-left col-6">Event Combine</h2>
+                </div>
+                <div class="card-body col-12" id="combines-body">
+                    <div class="card col-xl-4 col-md-6 mt-0" style="width: 18rem;">
+                        <img src='@combine.Img_Path' onclick="getCombineDetail(@combine.C_ID)" class="card-img-top rounded-top" style="min-height:275px;max-height:275px;object-fit: contain;" alt="">
+                        <div class="card-body row text-white m-0 pl-0 pr-0 rounded-bottom">
+                            <h4 class="card-title col-12 text-FXV">@combine.Name</h4>
+                            <p class="card-text col-12 content-font-size">@combine.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header p-0 card-header-secondary pb-4 row">
+                    <h2 class="medium-bold card-title text-left col-6">Event Attendees</h2>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded && NotPastEvent)
+                    {
+                        <div class="col-6 text-right">
+                            <h5 class="btn btn-light text-capitalize" onclick="AssignAttendee(@Model.E_ID)">
+                                Assign Attendees<i class="material-icons">
+                                    add
+                                </i>
+                            </h5>
+                        </div>
+                    }
+                </div>
+                <div class="card-body col-12" id="attendees-body">
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    {
+                        <div class="row" id="all_attendee_list">
+                        </div>
+                        <p id="attendee_more" style="cursor: pointer" onclick="loadMoreEventAttendees();" class="text-center text-white">More...</p>
+                    }
+
+                    @if (!(await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    {
+                        <div class="row" id="all_attendee_list">
+                        </div>
+                        <p id="attendee_more" style="cursor: pointer" onClick="loadMoreEventAttendees();" class="text-center text-white">More...</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/eventInfoListHandler.js"></script>

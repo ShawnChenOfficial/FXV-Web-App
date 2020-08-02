@@ -1,0 +1,75 @@
+﻿@model FXV.ViewModels.NewSystemUser
+@{
+}
+<div class="content p-0 mt-3">
+    <div id="loading-panel" class="loading-panel" hidden>
+        <div class="col-12 text-center loading-panel-items">
+            <h4>Loading...</h4>
+            <img style="        width: 2rem;
+        height: 2rem" src="../img/loading.gif" alt="">
+        </div>
+    </div>
+    <div class="container-fluid" id="page-info" data-page-from-Controller="AllUsers" data-page-from-Action="AllUsers">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Create User</h2>
+                    </div>
+                    <div class="card-body col-12 text-center">
+                        <form id="CreateSystemUsers" class="row" asp-action="CreateSystemUsers">
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="FirstName" class="control-label text-white"></label>
+                                <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="LastName" class="control-label text-white"></label>
+                                <input asp-for="LastName" class="form-control" placeholder="Lastname" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="Gender" class="control-label text-white"></label>
+                                <select asp-for="Gender" class="form-control">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="DOB" class="control-label text-white"></label>
+                                <input asp-for="DOB" class="form-control" placeholder="Date Of Birth" />
+                                <span asp-validation-for="DOB" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="Email" class="control-label text-white"></label>
+                                <input asp-for="Email" class="form-control" placeholder="Email address" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <span class="text-danger">@TempData["Error"]</span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="Address" class="control-label text-white"></label>
+                                <input asp-for="Address" class="form-control" placeholder="Address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="City" class="control-label text-white"></label>
+                                <input asp-for="City" class="form-control" placeholder="Address" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label asp-for="PhoneNumber" class="control-label text-white"></label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="Phone number" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </form>
+                        <div class="col-2 offset-5 pt-2">
+                            <button class="btn btn-warning-customized w-100" type="submit" onclick="submit()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../sources/js/createSystemUserHandler.js"></script>

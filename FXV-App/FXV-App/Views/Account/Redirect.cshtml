@@ -1,0 +1,41 @@
+﻿@page
+@{
+    string message_header = TempData["message_header"].ToString();
+    string message_content = TempData["message_content"].ToString();
+    Layout = "_Login";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="text-center text-white col-6 offset-3">
+            <h2 class="text-FXV">
+                @message_header
+            </h2>
+            <h6>
+                @message_content
+            </h6>
+            <h6 id="redirect">
+            </h6>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var num = 5;
+    window.onload = function () {
+        setInterval(function () {
+            if (num >= 2) {
+                document.getElementById('redirect').innerHTML = "Redirect to login page in " + num + " seconds";
+                num -= 1;
+            }
+            else if (num == 1) {
+                document.getElementById('redirect').innerHTML = "Redirect to login page in " + num + " second";
+                num -= 1;
+            }
+            else if (num < 1){
+                window.location.href = '/Account/Index';
+        }
+        },1000);
+    }
+</script>

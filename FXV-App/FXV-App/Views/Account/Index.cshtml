@@ -1,0 +1,34 @@
+﻿@model FXV.ViewModels.Account
+@{
+    Layout = "_Login";
+}
+
+@Html.Partial("_Loading")
+<div class="container">
+    <div class="row">
+        <form asp-action="CheckExistence" class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-8 offset-2">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h1 class=" text-white mb-5 text-center">Welcome</h1>
+            <span class="text-danger">@TempData["ErrorMsg"]</span>
+            <span asp-validation-for="UserAccount" class="text-danger"></span>
+            <div class="form-group w-100">
+                <label asp-for="UserAccount" class="control-label text-white"></label>
+                <div class="w-100">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <ion-icon name="person"></ion-icon>
+                            </div>
+                        </div>
+                        <input asp-for="UserAccount" class="form-control pl-2" placeholder="Email address" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="opacity:0.9">
+                <input id="submit" class="btn btn-warning-customized float-right" type="submit" value="Log in" />
+                <a class="btn btn-warning-customized float-left" asp-action="Register">Sign Up</a>
+            </div>
+        </form>
+    </div>
+</div>
+@Html.Partial("_AccountLoadingScript")

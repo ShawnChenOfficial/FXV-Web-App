@@ -1,0 +1,103 @@
+﻿@model FXV.ViewModels.NewModels.ViewModel_Organization
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+}
+<!--OrganizationInfo-->
+<div id="deleteConfirmPopUp" v-bind:class="{modal: true, 'display-block': Show}">
+    <!-- Modal content -->
+    <fieldset class="mt-5 col-10 offset-1">
+        <legend class="text-FXV text-center w-auto font-2rem medium-bold-400">Delete</legend>
+        <h3 class="text-FXV medium-bold-400 text-center pt-2 pb-5">Are you sure?</h3>
+        <div class="mb-4 text-center text-capitalize">
+            <button class="btn btn-outline-secondary mr-5 medium-bold-400" v-on:click="DeleteCombineConfirmed()">Yes</button>
+            <button class="btn btn-outline-secondary ml-5 medium-bold-400" v-on:click="DeleteCancelled()">No,Take me back</button>
+        </div>
+    </fieldset>
+</div>
+<div class="content p-0 mt-3">
+    <div class="container pb-5 pt-5" id="org-menu" data-org-id="@Model.OrgId">
+        <div class="row">
+            <div class="col-lg-6 col-md-7 col-12 text-white">
+                <div class="mt-5 pt-5"></div>
+                <h2 class="text-FXV font-weight-bold">@Model.Name</h2>
+                <div class="mt-3">
+                    <div class="col-12 text-left text-white">
+                        <a v-on:click="EditOrg()" class="pointer">
+                            <span class="material-icons pr-1">
+                                create
+                            </span>Edit
+                        </a>
+                        <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                        <a v-on:click="DeleteOrg()" class="pointer">
+                            <span class="material-icons pr-1">
+                                delete
+                            </span>Delete
+                        </a>
+                    </div>
+                    <div class="yellow-divider-bottom w-50"></div>
+                </div>
+                <div class="mt-3">
+                    <p>
+                        <span class="material-icons mr-1" style="float:left;line-height: 19px;font-size: 19px;">
+                            location_on
+                        </span> @Model.Location
+                    </p>
+                    <p>
+                        <span class="material-icons mr-1" style="float:left;line-height: 19px;font-size: 19px;">
+                            person
+                        </span> @Model.ManagerName
+                    </p>
+                    <div class="yellow-divider-bottom w-75"></div>
+                </div>
+                <div class="mt-3">
+                    <p class="text-muted">Teams: <span class="text-white">@Model.NumberOfTeams</span></p>
+                    <p class="text-muted">Members: <span class="text-white">@Model.NumberOfMembers</span></p>
+                    <p>@Model.Description</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-5">
+                <img class="org-img" src="@Model.ImgPath" />
+            </div>
+        </div>
+    </div>
+    <div class="container pb-5">
+        <h3 class="medium-bold text-left font-weight-bold text-white">Teams</h3>
+        <div class="container-fluid">
+            <div id="teams-menu" class="row container">
+                <div class="mt-1">
+                    <input v-on:keyup="Search" type="text" v-model="SearchText" placeholder="Search Name..." />
+                </div>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                {
+                    <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                    <div>
+                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddTeam">Add</a>
+                    </div>
+                }
+            </div>
+            <div class="mt-4 list" id="teams-list">
+                <div is="team-list-item" v-for="list in lists" v-bind:key="list.id" v-bind:team_id="list.team_id"
+                     v-bind:img_path="list.img_path" v-bind:name="list.name" v-bind:location="list.location"
+                     v-bind:manager="list.manager" v-bind:num_members="list.num_members" v-on:to_team_page="ToTeamPage(list.team_id)"></div>
+                <p id="more" class="m-auto text-center text-white pt-3"></p>
+            </div>
+        </div>
+    </div>
+    <div class="container pb-5">
+        <h3 class="medium-bold text-left font-weight-bold text-white">All Members</h3>
+        <div class="container-fluid">
+            <div id="members-menu" class="row container">
+                <div class="mt-1">
+                    <input v-on:keyup="Search()" type="text" v-model="SearchText" placeholder="Search Name..." />
+                </div>
+            </div>
+            <div class="mt-4 list" id="members-list">
+                <div is="member-list-item" v-for="list in lists" v-bind:key="list.id" v-bind:name="list.name" v-bind:img_path="list.img_path" v-bind:gender="list.gender"
+                     v-bind:age="list.age" v-bind:position="list.position" v-bind:team_name="list.team_name" v-on:get_profile="ToProfile(list.uid)"></div>
+                <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="LoadMore()">More</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/sources/js/organizationInfoPageHandler.js"></script>

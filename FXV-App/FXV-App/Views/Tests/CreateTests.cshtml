@@ -1,0 +1,151 @@
+﻿@model FXV.ViewModels.TestBuilder
+
+@Html.Partial("_Loading")
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Tests" data-page-from-Action="Tests">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Create Test</h2>
+                    </div>
+                    <form id="CreateTests" class="card-body col-12 row" asp-action="CreateTests" asp-controller="Home" method="post" enctype="multipart/form-data">
+                        <div class="col-12 col-xl-7 row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group col-12">
+                                <label asp-for="Name" class="control-label text-white"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Test Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Description" class="control-label text-white"></label>
+                                <input asp-for="Description" class="form-control" placeholder="Description" multiple />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="col-6 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <label asp-for="Gender" class="control-label text-white"></label>
+                                    <select asp-for="Gender" class="form-control">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="Measurement_Type" class="control-label text-white"></label>
+                                    <select asp-for="Measurement_Type" class="form-control">
+                                        <option>CM</option>
+                                        <option>M</option>
+                                        <option>KM</option>
+                                        <option>GM</option>
+                                        <option>KG</option>
+                                        <option>Sec</option>
+                                        <option>Min</option>
+                                        <option>Hours</option>
+                                        <option>Val</option>
+                                    </select>
+                                    <span asp-validation-for="Measurement_Type" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-6 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <label asp-for="Visible" class="control-label text-white"></label>
+                                    <select asp-for="Visible" class="form-control">
+                                        <option>True</option>
+                                        <option>False</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="Reverse" class="control-label text-white"></label>
+                                    <div style="padding-top:0.7rem;">
+                                        <input type="checkbox" asp-for="Reverse"><a class="text-white pl-2">Greater result will get lower score.</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <label asp-for="LowerResult" class="control-label text-white"></label>
+                                    <input asp-for="LowerResult" type="number" class="form-control" placeholder="Lowerest Result" />
+                                    <span asp-validation-for="LowerResult" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="LowerScore" class="control-label text-white"></label>
+                                    <input asp-for="LowerScore" type="number" class="form-control" placeholder="Lowerest Score" />
+                                    <span asp-validation-for="LowerScore" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="CategoryId" class="control-label text-white pr-2"></label>
+                                    <select class="pl-2" asp-for="CategoryId" asp-items="ViewBag.CategoryList">
+                                        <option>Select Category</option>
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-6 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <label asp-for="HigherResult" class="control-label text-white"></label>
+                                    <input asp-for="HigherResult" type="number" class="form-control" placeholder="Highest Result" />
+                                    <span asp-validation-for="HigherResult" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label asp-for="HigherScore" class="control-label text-white"></label>
+                                    <input asp-for="HigherScore" type="number" class="form-control" placeholder="Highest Score" />
+                                    <span asp-validation-for="HigherScore" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <!--
+                            <div class="col-12 row ml-0 mr-0 pl-0 pr-0">
+                                <div class="form-group col-12 col-xl-6">
+                                    <div class="card p-3">
+                                        <label class="control-label text-white">Organizations<br>(Please select from the drop down list)</label>
+                                        <table id="orgs">
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addOrg()">
+                                            <a href="javascript:void(0);">
+                                                Assign To Organizations<i class="material-icons">
+                                                    add
+                                                </i>
+                                            </a>
+                                        </div>
+                                        <span asp-validation-for="Organizations" class="col-12 text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12 col-xl-6">
+                                    <div class="card p-3">
+                                        <label class="control-label text-white">Teams<br>(Please select from the drop down list)</label>
+                                        <table id="teams">
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addTeams()">
+                                            <a href="javascript:void;">
+                                                Assign To Teams<i class="material-icons">
+                                                    add
+                                                </i>
+                                            </a>
+                                        </div>
+                                        <span asp-validation-for="Teams" class="col-12 text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>-->
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="testImg" class="w-100" src="/sources/img/testImg.png" style="object-fit: contain;" alt=""/>
+                            <div class="pt-2 row">
+                                <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Test Image</h3>
+                                <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="submit()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/testBuilderHandler.js"></script>
+<script src="/sources/js/input_search.js"></script>

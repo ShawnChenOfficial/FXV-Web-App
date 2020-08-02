@@ -1,0 +1,79 @@
+﻿@model FXV.ViewModels.SignUp
+@{
+    Layout = "_Login";
+}
+@Html.Partial("_Loading")
+<div class="container">
+    <div class="row">
+        <form asp-action="Register" style="margin-top: -9%;" class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2">
+            <h1 class="text-white mb-2 text-center">Sign-Up</h1>
+            <div class="form-group w-100">
+                <label asp-for="FirstName" class="control-label text-white"></label>
+                <input asp-for="FirstName" autocomplete="off" class="form-control pl-2" placeholder="First Name" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="LastName" class="control-label text-white"></label>
+                <input asp-for="LastName" autocomplete="off" class="form-control pl-2" placeholder="Lastname" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Email" class="control-label text-white"></label>
+                <input asp-for="Email" autocomplete="off" class="form-control pl-2" placeholder="Email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <span class="text-danger">@TempData["Error"]</span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Gender" class="control-label text-white"></label>
+                <select asp-for="Gender" class="form-control">
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="DOB" class="control-label text-white"></label>
+                <input asp-for="DOB" class="form-control pl-2" placeholder="Date Of Birth" />
+                <span asp-validation-for="DOB" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Nationality_ID" class="control-label text-white"></label>
+                <select asp-for="Nationality_ID" class="form-control" asp-items="ViewBag.Nationalities">
+                    <option value="">-- Select Nationality --</option>
+                </select>
+                <span asp-validation-for="Nationality_ID" class="text-danger" />
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Address" class="control-label text-white"></label>
+                <input asp-for="Address" autocomplete="off" class="form-control pl-2" placeholder="Address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="City" class="control-label text-white"></label>
+                <input asp-for="City" autocomplete="off" class="form-control pl-2" placeholder="Address" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="PhoneNumber" class="control-label text-white"></label>
+                <input asp-for="PhoneNumber" autocomplete="off" class="form-control pl-2" placeholder="Phone number" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Password" class="control-label text-white"></label>
+                <input asp-for="Password" autocomplete="off" class="form-control pl-2" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group w-100">
+                <label asp-for="Re_Password" class="control-label text-white"></label>
+                <input asp-for="Re_Password" autocomplete="off" class="form-control pl-2" placeholder="Confirm Password" />
+                <span asp-validation-for="Re_Password" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="opacity: 0.9">
+                <a class="btn btn-warning-customized" asp-action="Index">Back</a>
+                <input id="submit" class="btn btn-warning-customized float-right" type="submit" value="Register" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@Html.Partial("_AccountLoadingScript")

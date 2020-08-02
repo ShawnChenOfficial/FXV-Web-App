@@ -1,0 +1,191 @@
+
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    Layout = "_Layout";
+}
+
+@if ((await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+{
+    <div class="content p-0 mt-3">
+        <div class="container-fluid" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary">
+                            <h2 class="medium-bold-400 card-title text-center text-FXV">Best Scores</h2>
+                        </div>
+                        <div class="card-body row col-12" id="dashboard_charts">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary">
+                            <h2 class="medium-bold-400 card-title text-center text-FXV">My Calendar</h2>
+                        </div>
+                        <div class="card-body row">
+                            <div class="col-8 offset-2 col-xl-4 offset-xl-0 pb-3">
+                                <div id="calendar"></div>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 card-item" id="signed_activity">
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 card-item" id="unsigned_activity">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--amcharts-->
+    <script src="../sources/amcharts/core.js"></script>
+    <script src="../sources/amcharts/charts.js"></script>
+    <script src="../sources/amcharts/kelly.js"></script>
+    <script src="../sources/amcharts/animated.js"></script>
+    <!--react package-->
+    <script src="../sources/react/react.min.js"></script>
+    <script src="../sources/react/react-dom.min.js"></script>
+    <script src="../sources/ajax/moment-with-locales.min.js"></script>
+    <script src="../sources/react/stopExecutionOnTimeout.js"></script>
+    <!--charts-->
+    <script src="../sources/js/chartjs@v2.8.0/dashboard_charts.js"></script>
+    <!--jquery-->
+    <script src="../sources/jquery/jquery-3.4.1.min.js"></script>
+    <!--calendar-->
+    <script src="../sources/js/calendar/calendar_creater.js"></script>
+}
+@if ((await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || ((await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded && !(await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded))
+{
+    <div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary">
+                            <h2 class="medium-bold-400 card-title text-center text-FXV">Organization Statistics</h2>
+                        </div>
+                        <div class="card-body row col-12 ml-0" id="dashboard_charts">
+                            <div id="container" class="col-xl-12 col-12 p-0 pb-3">
+                                <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                <canvas id="canvas1" style="min-height: 300px" class="chartjs-render-monitor"></canvas>
+                            </div>
+                            <div id="container" class="col-xl-12 col-12 p-0">
+                                <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                <canvas id="canvas2" style="min-height: 300px" class="chartjs-render-monitor"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary">
+                            <h2 class="medium-bold-400 card-title text-center text-FXV">My Calendar</h2>
+                        </div>
+                        <div class="card-body row">
+                            <div class="col-8 offset-2 col-xl-4 offset-xl-0 pb-3">
+                                <div id="calendar"></div>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 card-item" id="signed_activity">
+
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 card-item" id="unsigned_activity">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--charts-->
+    <script src="/sources/js/chartjs@v2.8.0/chartjs.js"></script>
+    <script src="/sources/js/chartjs@v2.8.0/chartjs_util.js"></script>
+    <script src="/sources/js/chartjs@v2.8.0/org_dashboard_charts.js"></script>
+    <!--react package-->
+    <script src="../sources/react/react.min.js"></script>
+    <script src="../sources/react/react-dom.min.js"></script>
+    <script src="../sources/ajax/moment-with-locales.min.js"></script>
+    <script src="../sources/react/stopExecutionOnTimeout.js"></script>
+    <!--calendar-->
+    <script src="../sources/js/calendar/calendar_creater.js"></script>
+    <!--jquery-->
+    <script src="../sources/jquery/jquery-3.4.1.min.js"></script>
+}
+
+@if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+{
+    <div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary">
+                            <h2 class="medium-bold-400 card-title text-center text-FXV">System Administrator Statistics</h2>
+                        </div>
+                        <div class="card-body row col-12 ml-0" id="dashboard_charts">
+                            <div id="container" class="col-12 p-0">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class=""></div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
+                                </div>
+                                <canvas id="chart-2" class="chartjs-render-monitor" style="min-height: 350px"></canvas>
+                            </div>
+                            <div id="container" class="col-xl-12 col-12 p-0 pb-3">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class="">
+                                        </div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <canvas id="canvas1" style="min-height: 300px" class="chartjs-render-monitor"></canvas>
+                            </div>
+                            <div id="container" class="col-xl-12 col-12 p-0">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class="">
+                                        </div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <canvas id="canvas2" style="min-height: 300px" class="chartjs-render-monitor"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--react package-->
+    <script src="../sources/react/react.min.js"></script>
+    <script src="../sources/react/react-dom.min.js"></script>
+    <script src="../sources/ajax/moment-with-locales.min.js"></script>
+
+    <!--charts-->
+    <script src="/sources/js/chartjs@v2.8.0/chartjs.js"></script>
+    <script src="/sources/js/chartjs@v2.8.0/chartjs_util.js"></script>
+    <script src="/sources/js/chartjs@v2.8.0/admin_dashboard_charts.js"></script>
+
+}

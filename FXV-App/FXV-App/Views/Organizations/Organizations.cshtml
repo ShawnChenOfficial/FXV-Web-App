@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+<!--Organizations-->
+<div class="content p-0 mt-3">
+    <div class="container pb-5">
+        <h2 class="medium-bold text-left font-weight-bold text-FXV">Organizations</h2>
+        <div class="container">
+            <div>
+                <div id="org-menu" class="row container">
+                    <div class="mt-1">
+                        <input v-on:keyup="Search()" v-model="SearchText" placeholder="Search Name..." />
+                    </div>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    {
+                        <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                        <div>
+                            <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddOrg()">Add</a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="mt-4 list" id="list">
+                <div is='org-list-item' v-for='(list,index) in lists' v-bind:key='list.id' v-bind:name="list.name" v-bind:org_id="list.org_id"
+                     v-bind:img_path="list.img_path" v-bind:location="list.location" v-bind:manager="list.manager" v-bind:num_teams="list.num_teams" v-bind:num_members="list.num_members"
+                     v-on:to_org_info="ToOrgInfo(list.org_id)"></div>
+                <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="LoadMore($event)">More</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/sources/js/organizationsPageHandler.js"></script>

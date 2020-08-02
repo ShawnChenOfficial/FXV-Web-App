@@ -1,0 +1,45 @@
+﻿@model FXV.ViewModels.EventResultCollection
+
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update athlete result...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="container-fluid" id="page-info" data-page-from-Controller="EventMenu" data-page-from-Action="EventMenu" data-page-required-id="@TempData["Event_ID"]">
+    <div id="Result_Collection_Block" class="content p-0 mt-3 ml-3 mr-3" e_id="@TempData["Event_ID"]">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header p-0 card-header-secondary pb-4 row">
+                            <h2 class="medium-bold card-title text-FXV text-left col-6">Result Collection</h2>
+                        </div>
+                        <div class="row ml-1 mr-1 pl-4" id="select_categories">
+                            @foreach (var x in ViewData["Categories"] as List<FXV.Models.Test_Category>)
+                            {
+                                if (x.Category == "Speed")
+                                {
+                                    <a id="@x.Category" class="col-2 text-center btn btn-light" onclick="searchSpeedTests(this)">@x.Category</a>
+                                }
+                                else
+                                {
+                                    <a id="@x.Category" class="col-2 text-center btn btn-light" onclick="searchTests(this)">@x.Category</a>
+                                }
+                            }
+                        </div>
+                        <div id="test_block" class="pl-4">
+                            <form id="ResultCollectionSave" asp-action="ResultCollectionSave" name="ResultCollectionSave" class='form-group row'>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 text-right text-white"><input id="submit" hidden disabled class="btn btn-warning-customized" value="Submit" /></div>
+        </div>
+    </div>
+</div>
+<script src="../sources/js/input_search.js"></script>
+<script src="../sources/js/resultcollectionhandler.js"></script>

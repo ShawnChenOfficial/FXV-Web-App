@@ -1,0 +1,118 @@
+﻿@model FXV.ViewModels.TeamBuilder
+<!--OrganizationTeam Edit-->
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update Team information...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="OrganizationInfo" data-page-from-Action="OrganizationInfo" data-page-required-id="@TempData["Org_ID"]">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Edit Team</h2>
+                    </div>
+                    <form id="EditOrganizationTeams" class="card-body col-12 row" method="post" enctype="multipart/form-data">
+                        <div class="col-12 col-xl-7 row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Team_ID" hidden readonly />
+                            <input asp-for="RowVersion" value="@Model.RowVersionBase64" hidden readonly />
+                            <input asp-for="Img_Path" value="@Model.Img_Path" hidden readonly />
+                            <div class="form-group col-12">
+                                <label asp-for="Name" class="control-label text-white"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Team Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Location" class="control-label text-white"></label>
+                                <input asp-for="Location" class="form-control" placeholder="Location" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Description" class="control-label text-white"></label>
+                                <input asp-for="Description" class="form-control" placeholder="Description" multiple />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label class="control-label text-white">Manager Name (Please select from the drop down list)</label>
+                                <input autocomplete="off" asp-for="Manager_Name" class="form-control-disabled" placeholder="Manager Name" readonly />
+                                <div hidden>
+                                    <input asp-for="Owner.Id" hidden readonly />
+                                    <input asp-for="Owner.FirstName" hidden readonly />
+                                    <input asp-for="Owner.LastName" hidden readonly />
+                                </div>
+                            </div>
+                            <div class="col-12 row ml-0 mr-0 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <div class="card col-12 p-3">
+                                        <label class="control-label text-white">Members (Please select from the drop down list)</label>
+                                        <table id="members">
+                                            <tbody>
+                                                @foreach (var x in Model.Members)
+                                                {
+                                                    <tr class="row pb-2">
+                                                        <td class="col-7">
+                                                            @if (x.Role == "Team Manager")
+                                                            {
+                                                                <input autocomplete="off" id="Members_0__Member__FullName" class="w-100 form-control-disabled" name="Members[0].Member.FullName" type="text" value="@x.Member.FullName" readonly>
+                                                            }
+                                                            @if (x.Role != "Team Manager")
+                                                            {
+                                                                <input autocomplete="off" id="Members_0__Member__FullName" onkeyup="input_onkeyup(this,'SearchUsers')" onfocus="input_onfocus(this)" onfocusout="input_onfocusout(this)" class="w-100 form-control" name="Members[0].Member.FullName" type="text" value="@x.Member.FullName">
+                                                            }
+                                                            <ul class="border border-dark col-6 list-group p-0" id="Members_List" hidden="hidden"></ul>
+                                                            <div hidden="">
+                                                                <input id="Members_0__Member__Id" name="Members[0].Member.Id" value="@x.Member.Id" hidden>
+                                                                <input id="Members_0__Role" name="Members[0].Role" value="@x.Role" hidden>
+                                                            </div>
+                                                        </td>
+                                                        @if (x.Role != "Team Manager")
+                                                        {
+                                                            <td class="col-5"><a href="javascript:void(0)" onclick="removeMember(this)">Remove</a></td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addMember()">
+                                            <a href="javascript:void(0)">
+                                                Add Team Members<i class="material-icons">
+                                                    add
+                                                </i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="teamImg" class="w-100" src="@Model.Img_Path" />
+                            <div class="pt-2 row">
+                                <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Team Image</h3>
+                                <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="editSubmit(@TempData["Org_ID"])">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/orgTeamBuilderHandler.js"></script>
+<script src="/sources/js/input_search.js"></script>
+<script>$(function () {
+        var tb = $("#members").first();
+        var count = tb.find("tbody").find("tr").length;
+        for (var i = 0; i < count; i++) {
+            var newTR = tb.find("tr").eq(i).html().replace(/\[\d+\]/g, '[' + i + ']').replace(/_\d+/g, '_' + i);
+            tb.find("tr").eq(i).html(newTR);
+        }
+    })</script>

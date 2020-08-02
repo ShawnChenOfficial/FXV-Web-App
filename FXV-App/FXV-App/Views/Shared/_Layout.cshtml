@@ -1,0 +1,326 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Home Page";
+}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="../sources/img/Logo.png">
+    <title>
+        Force X Velocity
+    </title>
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="/sources/css/google-apis-font-famaly.css">
+    <link rel="stylesheet" href="/sources/css/font-awesome.min.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/sources/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/sources/lib/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Site CSS -->
+    <link rel="stylesheet" type="text/css" href="/sources/css/site.css" />
+    <link rel="stylesheet" type="text/css" href="/sources/css/site-v0.1.1.css" />
+    <link href="/sources/assets/css/material-dashboard.min.css?v=2.1.0" rel="stylesheet">
+    @if ((await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+    {
+        <link rel="stylesheet" type="text/css" href="/sources/css/sidebar-lower-permission.css" />
+    }
+    @if (!(await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+    {
+        <link rel="stylesheet" type="text/css" href="/sources/css/sidebar-higher-permission.css" />
+    }
+    <script src="/sources/jquery/jquery-3.4.1.min.js"></script>
+</head>
+<body id="body" class="dark-edition">
+    <!-- Extra details for Live View on GitHub Pages -->
+    <div class="wrapper ">
+        <div id="sidebar-extended" class="sidebar" data-sidebar-extended-on="false">
+            <!--
+                Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+                Tip 2: you can also add an image using data-image tag
+            -->
+            <div class="logo text-center">
+                <div>
+                    <div class="text-left">
+                        <img style="width:40%;margin-top:-1.2rem" src="/sources/img/Logo.png" alt="Image">
+                    </div>
+                    <div id="sidebar-extended-trigger-close" class="justify-content-end" style="position:absolute;top:8px;right:5px;z-index:1000;cursor: pointer">
+                        <a>
+                            <i class="material-icons text-white">
+                                arrow_back
+                            </i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <div class="row" style="cursor:pointer" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])">
+                        <img class="col-6 offset-3 round-circle" style="height:7.2rem;width:7.2rem;" src=@ViewData["user_img_path"] alt="Image">
+                        <h3 class="text-white col-12 pb-1 medium-bold mb-3 ml-0">@ViewData["FirstName"] @ViewData["LastName"]</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li id="Index" class="nav-item active">
+                        <a class="nav-link" asp-action="Index" asp-controller="Home">
+                            <i class="material-icons text-FXV">home</i>
+                            <p>Home</p>
+                        </a>
+                    </li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded)
+                    {
+                        <li id="Organizations" class="nav-item pt-0" onclick="tags_onclick(this)">
+                            <a class="nav-link mt-0">
+                                <i class="material-icons text-FXV">people</i>
+                                <p>Organizations</p>
+                            </a>
+                        </li>
+                    }
+                    <li id="Leaderboards" class="nav-item" onclick="tags_onclick(this)">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">assessment</i>
+                            <p>Leaderboards</p>
+                        </a>
+                    </li>
+                    <li id="Tests" class="nav-item dropdown" onclick="tags_onclick(this)">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">fitness_center</i>
+                            <p>Tests</p>
+                        </a>
+                    </li>
+                    <li id="Combines" class="nav-item" onclick="tags_onclick(this)">
+                        <a class="nav-link mt-0">
+                            <i class="material-icons text-FXV">assignment</i>
+                            <p>Combines</p>
+                        </a>
+                    </li>
+                    <li id="Events" class="nav-item" onclick="tags_onclick(this)">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">date_range</i>
+                            <p>Events</p>
+                        </a>
+                    </li>
+                    <li id="nav-bottom-item" class="nav-item nav-bottom-item w-100">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+                        {
+                            <h3 class="text-center text-white"><strong>Combine Score</strong></h3>
+                            <h1 class="text-center text-FXV mb-0 medium-bold-500" style="font-size:5rem; ">@ViewData["best_combine_score"]</h1>
+                        }
+                        @if (((await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded) && !(await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+                        {
+                            <div class="row m-auto">
+                                <div class="col-6">
+                                    <h3 class="text-center text-white"><strong>Teams</strong></h3>
+                                    <h1 class="text-center text-FXV mb-0 medium-bold-500" style="font-size:3.5rem; ">@ViewData["teams_num"]</h1>
+                                </div>
+                                <div class="col-6">
+                                    <h3 class="text-center text-white"><strong>Athletes</strong></h3>
+                                    <h1 class="text-center text-FXV mb-0 medium-bold-500" style="font-size:3.5rem; ">@ViewData["athletes_num"]</h1>
+                                </div>
+                            </div>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                        {
+                            <h3 class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></h3>
+                            <h1 id="AllUsers" class="text-center text-FXV mb-0 medium-bold-500" onclick="tags_onclick(this)" style="cursor: pointer; font-size:5rem; ">@ViewData["athletes_num"]</h1>
+                        }
+                        <div class="nav-link nav-bottom-item-triangle row">
+                            <div class="col-6 offset-1 text-white" style="cursor: pointer">
+                                Terms & Conditions
+                            </div>
+                            <div class="col-5 text-white" style="cursor: pointer">FAQs</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="sidebar-collapse" class="sidebar sidebar-collapse-width" data-sidebar-collapse-on="true">
+            <!--
+                Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+                Tip 2: you can also add an image using data-image tag
+            -->
+            <div class="logo text-center">
+                <div>
+                    <div id="sidebar-collapse-trigger-close" class="justify-content-end" style="position:absolute;top:8px;right:5px;z-index:1000;cursor: pointer">
+                        <a>
+                            <i class="material-icons text-white">
+                                arrow_forward
+                            </i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <div class="row mt-3" style="cursor:pointer" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])">
+                        <img src="/sources/img/Logo.png" alt="Image" class="col-10 offset-1 mb-2">
+                        <img class="col-10 offset-1 round-circle" style="height:3.5rem;width:3.5rem;" src=@ViewData["user_img_path"] alt="Image" data-toggle="tooltip" data-placement="right" title="Profile">
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li id="index" class="nav-item active">
+                        <a class="nav-link" asp-action="Index" asp-controller="Home" data-toggle="tooltip" data-placement="right" title="Home">
+                            <i class="material-icons text-FXV">home</i>
+                        </a>
+                    </li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded)
+                    {
+                        <li id="organizations" class="nav-item pt-0" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Organizations">
+                            <a class="nav-link mt-0">
+                                <i class="material-icons text-FXV">people</i>
+                            </a>
+                        </li>
+                    }
+                    <li id="leaderboards" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Leaderboards">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">assessment</i>
+                        </a>
+                    </li>
+                    <li id="tests" class="nav-item dropdown" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Tests">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">fitness_center</i>
+                        </a>
+                    </li>
+                    <li id="combines" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Combines">
+                        <a class="nav-link mt-0">
+                            <i class="material-icons text-FXV">assignment</i>
+                        </a>
+                    </li>
+                    <li id="events" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Events">
+                        <a class="nav-link mt-0" href="javascript:void(0)">
+                            <i class="material-icons text-FXV">date_range</i>
+                        </a>
+                    </li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+                    {
+                        <li class="nav-item nav-bottom-item-collapse w-100">
+                            <div class="rotateZ-minus-90">
+                                <p class="text-center text-white"><strong>Combine Score</strong></p>
+                                <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["best_combine_score"]</p>
+                            </div>
+                            <div id="help" class="nav-item" style="cursor: pointer;">
+                                <a class="nav-link mt-0" data-toggle="tooltip" data-placement="right" title="FAQs" href="javascript:void(0)">
+                                    <i class="material-icons text-FXV">help</i>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    @if (((await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded) && !(await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
+                    {
+                        <li class="nav-item nav-bottom-item-not-single-item w-100">
+                            <div class="row rotateZ-minus-90 mb-4">
+                                <div class="col-12">
+                                    <p class="text-center text-white"><strong>Teams</strong></p>
+                                    <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["teams_num"]</p>
+                                </div>
+                            </div>
+                            <div class="row rotateZ-minus-90">
+                                <div class="col-12">
+                                    <p class="text-center text-white"><strong>Athletes</strong></p>
+                                    <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["athletes_num"]</p>
+                                </div>
+                            </div>
+                            <div id="help" class="nav-item" style="cursor: pointer;">
+                                <a class="nav-link mt-0" data-toggle="tooltip" data-placement="right" title="FAQs" href="javascript:void(0)">
+                                    <i class="material-icons text-FXV">help</i>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    {
+                        <li class="nav-item nav-bottom-item-collapse w-100">
+                            <div id="allusers" class="rotateZ-minus-90" onclick="tags_onclick(this)" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="See All System Users">
+                                <p class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></p>
+                                <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["athletes_num"]</p>
+                            </div>
+                            <div id="help" class="nav-item" style="cursor: pointer;">
+                                <a class="nav-link mt-0" data-toggle="tooltip" data-placement="right" title="FAQs" href="javascript:void(0)">
+                                    <i class="material-icons text-FXV">help</i>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <div id="toastnotification" class="toastnotification toastnotification-hidden">
+                <div class="toastnotification-content-success text-center">
+                    <h6>Success!</h6>
+                </div>
+            </div>
+            <!--nav when small scale of page-->
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+                    <div class="justify-content">
+                    </div>
+                    <div class="justify-content-end">
+                        <ul class="navbar-nav" style="flex-direction:row">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="Index" asp-controller="Home" data-toggle="tooltip" title="Home">
+                                    <i class="material-icons text-white">home</i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="javscript:void(0)" data-toggle="tooltip" title="Notifications">
+                                    <i class="material-icons text-white">notifications</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="javscript:void(0)" data-toggle="tooltip" title="Profile" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])">
+                                    <i class="material-icons text-white">person</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="javscript:void(0)" data-toggle="tooltip" title="Settings" id="Settings" onclick="tags_onclick(this)">
+                                    <i class="material-icons text-white">settings</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="logout" asp-controller="home" data-toggle="tooltip" title="Log out">
+                                    <i class="material-icons text-white">exit_to_app</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <partial name="_Loading" />
+            <div id="body-content" class="mt-5">
+                @RenderBody();
+            </div>
+        </div>
+    </div>
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+    <!--   Core JS Files   -->
+    <script src="/sources/assets/js/core/popper.min.js"></script>
+    <script src="/sources/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="/sources/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script src="/sources/buttons_github/buttons.js"></script>
+    <!-- Chartist JS -->
+    <script src="/sources/assets/js/plugins/chartist.min.js"></script>
+    <script src="/sources/js/layoutHandler.js"></script>
+    <script src="/sources/js/historyCustomizedRouting.js"></script>
+    <!-- Lodash -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171792787-2"></script>
+
+    <script>$(function ($) {
+            $('[data-toggle="tooltip"]').tooltip({ animation: true });
+        });
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-171792787-2');</script>
+</body>
+</html>

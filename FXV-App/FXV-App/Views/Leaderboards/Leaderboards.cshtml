@@ -1,0 +1,136 @@
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div>
+                        <div id="leaderboard_setting_header text-white" class="card-header p-0 card-header-secondary">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h2 class="medium-bold card-title">Leaderboard Settings</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <button id="btn_test" onclick="btn_test_onclick()" class="btn btn-dark-customized" data-toggle="collapse" data-target="#collapse_test" aria-expanded="false" aria-controls="collapseExample"><span class="material-icons text-FXV pr-2">directions_run</span> Tests</button>
+                            <button id="btn_combine" onclick="btn_combine_onclick()" class="btn btn-dark-customized" data-toggle="collapse" data-target="#collapse_combine" aria-expanded="false" aria-controls="collapseExample"><span class="material-icons text-FXV pr-2">library_books</span> Combines</button>
+                            <button id="btn_event" onclick="btn_event_onclick()" class="btn btn-dark-customized" data-toggle="collapse" data-target="#collapse_event" aria-expanded="false" aria-controls="collapseExample"><span class="material-icons text-FXV pr-2">date_range</span> Events</button>
+                        </div>
+                        <div class="card-body col-12 pt-0 pb-0">
+                            <div class="collapse row" id="collapse_test">
+                                <div class="row col-12">
+                                    <div class="col-4 mb-4">
+                                        <select id="select_gender" class="custom-select" onchange="setTestsDropDownList()">
+                                            <option value="0" selected>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-4">
+                                        <select id="select_test" class="custom-select">
+                                            <option value="0" selected>Select Test</option>
+                                        </select>
+                                    </div>
+                                    <!--
+                                    <div class="col-4 mb-4">
+                                        <select id="select_sport" class="custom-select">
+                                            <option value="0" selected>Select Sport</option>
+                                            <option value="1">Swim</option>
+                                            <option value="2">Rugby</option>
+                                        </select>
+                                    </div>
+                                    -->
+                                    <div class="col-4 mb-4">
+                                        <select id="select_team" class="custom-select">
+                                            <option value="0" selected>Select Team</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button onclick="_search_test()" class="btn btn-warning-customized float-right">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body col-12 pt-0 pb-0">
+                            <div class="collapse row" id="collapse_combine">
+                                <div class="row col-12">
+                                    <div class="col-4 mb-4">
+                                        <select id="select_gender" class="custom-select" onchange="setCombinesDropDownList()">
+                                            <option value="0" selected>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-4">
+                                        <select id="select_combine" class="custom-select">
+                                            <option value="0" selected>Select Combine</option>
+                                        </select>
+                                    </div>
+                                    <!--
+                                    <div class="col-4 mb-4">
+                                        <select id="select_sport" class="custom-select">
+                                            <option value="0" selected>Select Sport</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    -->
+                                    <div class="col-4 mb-4">
+                                        <select id="select_team" class="custom-select">
+                                            <option value="0" selected>Select Team</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button onclick="_search_combine()" class="btn btn-warning-customized float-right">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body col-12 pt-0 pb-0">
+                            <div class="collapse row" id="collapse_event">
+                                <div class="row col-12">
+                                    <div class="col-4 mb-4">
+                                        <select id="select_event" class="custom-select">
+                                            <option value="0" selected>Select Event</option>
+                                        </select>
+                                    </div>
+                                    <!--
+                                    <div class="col-4 mb-4">
+                                        <select id="select_gender" class="custom-select" onchange="setEventsDropDownList()">
+                                            <option value="0" selected>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 mb-4">
+                                        <select id="select_sport" class="custom-select">
+                                            <option value="0" selected>Select Sport</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    -->
+                                    <div class="col-4 mb-4">
+                                        <select id="select_team" class="custom-select">
+                                            <option value="0" selected>Select Team</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button onclick="_search_event()" class="btn btn-warning-customized float-right">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div id="leaderboard_list">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/leaderboardHandler.js"></script>

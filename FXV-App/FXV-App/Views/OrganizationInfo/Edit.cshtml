@@ -1,0 +1,68 @@
+﻿@model FXV.ViewModels.OrganizationBuilder
+<!--Organization Edit-->
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update Organization information...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Organizations" data-page-from-Action="Organizations">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV">Edit Organization</h2>
+                    </div>
+                    <form id="EditOrganizations" class="card-body col-12 row" method="post" enctype="multipart/form-data">
+                        <div class="col-8 col-xl-7 row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Org_ID" hidden readonly />
+                            <input asp-for="RowVersion" value="@Model.RowVersionBase64" hidden readonly />
+                            <input asp-for="Image_Path" readonly hidden />
+                            <div class="form-group col-12">
+                                <label asp-for="Name" class="control-label text-white"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Organization Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Location" class="control-label text-white"></label>
+                                <input asp-for="Location" class="form-control" placeholder="Location" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label class="control-label text-white">Manager Name (Please select from the drop down list)</label>
+                                <input class="form-control-disabled" asp-for="Manager_Name" placeholder="Manager Name" readonly />
+                                <div hidden>
+                                    <input asp-for="Owner.Id" hidden readonly />
+                                    <input asp-for="Owner.FirstName" hidden readonly />
+                                    <input asp-for="Owner.LastName" hidden readonly />
+                                </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="Description" class="control-label text-white"></label>
+                                <input asp-for="Description" class="form-control" placeholder="Description" multiple />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-5 pt-4">
+                            <img id="orgImg" class="w-100" src="@Model.Image_Path" style="object-fit: contain;" />
+                            <div class="pt-2 row">
+                                <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Organization Image</h3>
+                                <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />
+                                <span asp-validation-for="Image" class="col-12 ml-2 text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="editSubmit()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/organizationBuilderHandler.js"></script>
+<script src="/sources/js/input_search.js"></script>

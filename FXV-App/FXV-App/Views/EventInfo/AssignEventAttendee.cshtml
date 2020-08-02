@@ -1,0 +1,52 @@
+﻿@model FXV.ViewModels.EventAttendeeBuilder
+
+<div id="loading-panel" class="loading-panel" hidden="hidden">
+    <div class="col-12 text-center loading-panel-items">
+        <h4 class="text-white">Loading...</h4>
+        <h4 class="text-white">It might take a while to update this/those Event attendee(s)...</h4>
+        <img style="width: 2rem;
+        height: 2rem" src="/sources/img/loading.gif" alt="">
+    </div>
+</div>
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="EventInfo" data-page-from-Action="EventInfo" data-page-required-id="@TempData["Event_ID"]">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary">
+                        <h2 class="medium-bold card-title text-left text-FXV" id="event-id-tag" event_id="@TempData["Event_ID"]">Assign Member to @TempData["Event_Name"]</h2>
+                    </div>
+                    <form id="CreateEventAttendee" class="card-body col-12 row" asp-action="CreateEventAttendee" asp-controller="Home" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="col-12 col-xl-7 row">
+                            <div class="col-12 row ml-0 mr-0 pl-0 pr-0">
+                                <div class="form-group col-12">
+                                    <div class="card col-12 p-3">
+                                        <label class="control-label text-white">Members (Please select from the drop down list)</label>
+                                        <table id="members">
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <div style="margin-top:10px" class="btn btn-light text-capitalize" onclick="addMember()">
+                                            <a href="javascript:void(0)">
+                                                Assign Event Attendees<i class="material-icons">
+                                                    add
+                                                </i>
+                                            </a>
+                                        </div>
+                                        <span asp-validation-for="Members" class="col-12 text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-2 offset-5">
+                        <button class="btn btn-warning-customized w-100" type="submit" onclick="submit()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/sources/js/eventAttendeeBuilderHandler.js"></script>
+<script src="/sources/js/input_search.js"></script>

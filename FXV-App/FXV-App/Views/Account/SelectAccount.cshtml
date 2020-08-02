@@ -1,0 +1,37 @@
+﻿@model FXV.ViewModels.LoginInfo
+@{
+    Layout = "_Login";
+}
+@Html.Partial("_Loading")
+<div class="container">
+    <div class="row">
+        <h1 class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2 text-center mb-5 text-white ">
+            Select Account
+        </h1>
+        @{
+            string identity = "x";
+            foreach (FXV.ViewModels.LoginInfo user in ViewBag.UserInfo as List<FXV.ViewModels.LoginInfo>)
+            {
+                <div class="p-0 col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-8 offset-2 mb-2 border btn border-light btn-outline-secondary transparent-background">
+                    <div class="btn w-100 text-white text-left collapsed" data-toggle="collapse" data-target="@identity.Insert(0,"#")" aria-expanded="false" aria-controls="@identity">
+                        <h4 class="ml-4 pt-2">
+                            @user.FirstName
+                        </h4>
+                    </div>
+                    <form class="text-left p-4 w-100 bg-transparent form-group collapse" id="@identity" asp-action="Login">
+                        <input asp-for="Account" hidden value="@user.Account" />
+                        <input asp-for="Id" hidden value="@user.Id" />
+                        <div class="form-group">
+                            <label asp-for="Password" class="control-label text-white"></label>
+                            <input asp-for="Password" class="form-control pl-2">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <button id="submit" type="submit" class="btn btn-warning-customized">Log in</button>
+                    </form>
+                </div>
+                identity += 1;
+            }
+        }
+    </div>
+</div>
+@Html.Partial("_AccountLoadingScript")

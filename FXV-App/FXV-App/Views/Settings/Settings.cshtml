@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model FXV.ViewModels.ChangePwdParams;
+
+@{
+}
+<style>
+    .form-group li {
+        color: #dc3545 !important;
+        list-style:none;
+    }
+    .validation-summary-for-ChangePassword ul {
+        background: none;
+        padding-left: 0 !important;
+    }
+    .form-group li:hover {
+        background: none !important;
+    }
+</style>
+@Html.Partial("_Loading")
+<div class="content p-0 mt-3" id="page-info" data-page-from-Controller="Home" data-page-from-Action="Index">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 card-header-secondary pb-4 row">
+                        <h2 class="medium-bold card-title text-FXV col-12">Settings</h2>
+                    </div>
+                    <div class="card-body col-12" id="changePwdBlock">
+                        <a class="btn btn-warning" data-toggle="collapse" data-target="#change_pwd" aria-expanded="true" aria-controls="collapseExample">Change Password</a>
+                        <div class="row collapse" id="change_pwd">
+                            <div class="col-8 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                                <form class="form-group" id="ChangePassword">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-for-ChangePassword"></div>
+                                    <div class="mt-3">
+                                        <label asp-for="CurrentPassword" class="control-label text-white"></label>
+                                        <input asp-for="CurrentPassword" class="form-control pl-2" />
+                                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                                    </div>
+                                    <div class="mt-4">
+                                        <label asp-for="NewPassword" class="control-label text-white"></label>
+                                        <input asp-for="NewPassword" class="form-control pl-2" />
+                                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                                    </div>
+                                    <div class="mt-4">
+                                        <label asp-for="ConfirmNewPassword" class="control-label text-white"></label>
+                                        <input asp-for="ConfirmNewPassword" class="form-control pl-2" />
+                                        <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                                    </div>
+                                </form>
+                                <button class="btn btn-warning-customized mt-4 float-right" onclick="submit()">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>function submit() {
+        $('#loading-panel').removeAttr('hidden');
+
+        var form = document.getElementById('ChangePassword');
+        var formData = new FormData(form);
+
+        $.ajax({
+            type: 'POST',
+            url: '../Settings/ChangePassword',
+            data: formData,
+            cache: false,
+            async: false,
+            processData: false,
+            contentType: false,
+            dataType: 'html',
+            success: function (data) {
+                var str = data.toString();
+                if (str.indexOf("<!--This is the login layout-->") == 0) {
+                    alert("The system detects that you have not operated for a long time, please login again");
+                    document.clear();
+                    location.reload();
+                }
+                else {
+                    $('#body-content').html(data);
+
+                   ($('.validation-summary-for-ChangePassword').text() == "") ? (($("#ChangePassword").find('span').text() == "") ? window.alert("Success!") : $('#change_pwd').addClass('show')) : $('#change_pwd').addClass('show');
+                }
+            },
+            error: function (xhr) {
+                $("#body-content").html(xhr.responseText);
+            }
+        });
+
+        ApplyHistoryRouting();
+    }</script>

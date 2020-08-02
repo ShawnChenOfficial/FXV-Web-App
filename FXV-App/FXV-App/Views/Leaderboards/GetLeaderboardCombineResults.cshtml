@@ -1,0 +1,65 @@
+﻿@model FXV.ViewModels.Leaderboard_CombineResultsList
+@{
+    var count = 1;
+}
+@if ((ViewData["List"] as List<FXV.ViewModels.Leaderboard_CombineResultsList>).Count == 0)
+{
+    <h5 class="text-center pt-5 pb-5">Sorry, we didn't find any result.</h5>
+}
+@if ((ViewData["List"] as List<FXV.ViewModels.Leaderboard_CombineResultsList>).Count != 0)
+{
+    <table class="table table-borderless text-center" style="font-size:x-large!important">
+        <thead>
+            <tr style="background-color: black;">
+                <th class="border-0" scope="col">#</th>
+                <th scope="col">Name</th>
+                <th class="border-0" scope="col">Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var x in (ViewData["List"] as List<FXV.ViewModels.Leaderboard_CombineResultsList>))
+            {
+                <tr>
+                    <th class="p-1 border-0"></th>
+                </tr>
+                if (count == 1)
+                {
+                    <tr class="leaderboard-gold">
+                        <th scope="row">@count</th>
+                        <td>@x.Runner_Name</td>
+                        <td>@x.Point</td>
+                    </tr>
+                }
+                if (count == 2)
+                {
+
+                    <tr class="leaderboard-silver">
+                        <th scope="row">@count</th>
+                        <td>@x.Runner_Name</td>
+                        <td>@x.Point</td>
+                    </tr>
+                }
+                if (count == 3)
+                {
+
+                    <tr class="leaderboard-bronze">
+                        <th scope="row">@count</th>
+                        <td>@x.Runner_Name</td>
+                        <td>@x.Point</td>
+                    </tr>
+                }
+                if (count > 3)
+                {
+                    <tr class="leaderboard-white after_3">
+                        <th scope="row">@count</th>
+                        <td class="dark">@x.Runner_Name</td>
+                        <td>@x.Point</td>
+                    </tr>
+
+                }
+
+                count++;
+            }
+        </tbody>
+    </table>
+}
