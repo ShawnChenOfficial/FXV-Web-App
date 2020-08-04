@@ -113,6 +113,7 @@
       <AllowExplicitVersion>true</AllowExplicitVersion>
     </PackageReference>
     <PackageReference Include="JWT" Version="6.1.4" />
+    <PackageReference Include="MailKit" Version="2.8.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FXV-App.csproj" />

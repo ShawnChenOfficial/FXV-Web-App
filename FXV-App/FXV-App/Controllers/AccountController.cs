@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace FXV.Controllers
             this.userManager = userManager;
             this.configuration = configuration;
             this.accessor = accessor;
-            this.jwtHandler = new JwtHandler(accessor, userManager, configuration);
+            this.jwtHandler = new JwtHandler(accessor, userManager,configuration);
         }
 
 
@@ -108,19 +108,18 @@ namespace FXV.Controllers
 
                     string jwtToken = await jwtHandler.GenerateToken(signInKey, user);
 
-                    string token = "id=" + user.Id + "&var1=" + user.UserName + "&var2=" + codeWebVersion + "&var3=" + jwtToken;
+                    string token ="id=" + user.Id + "&var1=" + user.UserName + "&var2=" + codeWebVersion +"&var3=" + jwtToken;
 
                     var MailingService = new MailingLib.MailingService
-                                            (configuration["MailingInfo:Address"],
-                                             configuration["MailingInfo:PWD"],
+                                            (configuration,
                                              user.Email,
                                              token);
 
-                    var activateEmailSent = MailingService.Sending(mailingType: MailingLib.MailingService.MailingType.PwdReset);
+                    var activateEmailSent = MailingService.Sending(mailingType:MailingLib.MailingService.MailingType.PwdReset);
 
-                    if (activateEmailSent)
+                    if (await activateEmailSent)
                     {
-                        applicationDbContext.UserTokens.Add(new IdentityUserToken<int> { UserId = user.Id, LoginProvider = "FXV", Name = "asp_token_pwd_reset", Value = WebUtility.UrlDecode(codeWebVersion.Replace("+", "%2B")) });
+                        applicationDbContext.UserTokens.Add(new IdentityUserToken<int> { UserId = user.Id, LoginProvider = "FXV", Name = "asp_token_pwd_reset", Value = WebUtility.UrlDecode(codeWebVersion.Replace("+", "%2B"))});
 
                         applicationDbContext.UserTokens.Add(new IdentityUserToken<int> { UserId = user.Id, LoginProvider = "FXV", Name = "jwt_token_pwd_reset", Value = jwtToken });
 
@@ -138,7 +137,7 @@ namespace FXV.Controllers
             }
             else
             {
-                return View("ResetPwd", resetPwd);
+                return View("ResetPwd",resetPwd);
             }
         }
 
@@ -401,8 +400,7 @@ namespace FXV.Controllers
                     string token = "var1=" + user.UserName + "&var2=" + codeWebVersion;
 
                     var activateEmailSent = new MailingLib.MailingService
-                                            (configuration["MailingInfo:Address"],
-                                             configuration["MailingInfo:PWD"],
+                                            (configuration,
                                              model.Email,
                                              token)
                                              .Sending(mailingType: MailingLib.MailingService.MailingType.Activate);

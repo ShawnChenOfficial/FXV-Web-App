@@ -57,6 +57,8 @@ namespace FXV
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseMySql(Configuration.GetConnectionString("MySqlConnection"))
+                //options => options.UseMySql(Configuration.GetConnectionString("MySqlConnectionOnHostingServerCloud"))
+                //options => options.UseMySql(Configuration.GetConnectionString("MySqlConnectionOnHostingServer"))
                 );
 
 
@@ -96,6 +98,8 @@ namespace FXV
                     new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
+                        ValidIssuer = "localhost",
+                        ValidAudience = "localhost",
                         IssuerSigningKey = new
                         SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:privatekey"]))
                     };
