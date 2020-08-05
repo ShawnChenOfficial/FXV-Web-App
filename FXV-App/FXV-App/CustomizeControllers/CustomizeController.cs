@@ -59,7 +59,7 @@ namespace FXV_App.CustomizeControllers
                                          ActionExecutionDelegate next)
         {
 
-            _jwtHandler.SetToken(context.HttpContext.Request.Cookies["access_token"]);//
+            _jwtHandler.SetToken(context.HttpContext.Request.Cookies["access_token"]);
 
             var result = await _jwtHandler.RoleIsUpdated();
 

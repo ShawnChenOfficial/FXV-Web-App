@@ -9,8 +9,6 @@
         DeleteCombineConfirmed: function () {
             $('#loading-panel').removeAttr('hidden');
 
-            console.log(org_menu.org_id);
-
             var params = new URLSearchParams();
             params.append('id', org_menu.org_id);
 

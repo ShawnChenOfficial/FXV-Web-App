@@ -592,21 +592,21 @@ namespace FXV_App.Controllers
         }
 
         //Get all events list
-        [HttpGet]
+        [HttpGet("{num}/{last_id}")]
         public async Task<IActionResult> GetEventList(int num, int last_id)
         {
             var eventList = new List<ViewModel_Event>();
             if (num == 0)
             {
-                eventList = await _dbContext.Event
+                eventList = await _dbContext.Event.Include(inc => inc.Event_Status)
                         .Select(s => new ViewModel_Event
                         {
                             EventId = s.E_ID,
                             Name = s.Name,
                             Description = s.Description,
                             Location = s.Location,
-                            Time = s.Time,
-                            Date = s.Date.ToString("ddd MMM dd yyyy 'GMT'K"),
+                            Time = s.Time.ToString("h:mm tt"),
+                            Date = s.Date.ToString("MMM dd yyyy"),
                             Img_Path = s.Img_Path,
                             Registered = _dbContext.Event_Assigned_Attendee.Where(a => a.E_ID == s.E_ID).Count(),
                             Status = s.Event_Status.Status
@@ -615,24 +615,38 @@ namespace FXV_App.Controllers
             }
             else
             {
-                eventList = await _dbContext.Event.Where(w => w.E_ID > last_id).OrderBy(o => o.E_ID).Take(num)
+                eventList = await _dbContext.Event.Where(w => w.E_ID > last_id).OrderBy(o => o.E_ID).Take(num).Include(inc=>inc.Event_Status)
                         .Select(s => new ViewModel_Event
                         {
                             EventId = s.E_ID,
                             Name = s.Name,
                             Description = s.Description,
                             Location = s.Location,
-                            Time = s.Time,
-                            Date = s.Date.ToString("ddd MMM dd yyyy 'GMT'K"),
+                            Time = s.Time.ToString("h:mm tt"),
+                            Date = s.Date.ToString("MMM dd yyyy"),
                             Img_Path = s.Img_Path,
                             Registered = _dbContext.Event_Assigned_Attendee.Where(a => a.E_ID == s.E_ID).Count(),
                             Status = s.Event_Status.Status
                         })
                         .ToListAsync();
             }
-
-
             return new JsonResult(JsonConvert.SerializeObject(eventList));
+        }
+
+        [HttpGet("{e_id}")]
+        public async Task<IActionResult> GetEventCombineDetail(int e_id)
+        {
+            var event_combine = await _dbContext.Event_Builder.Where(w => w.E_ID == e_id).Include(inc => inc.Combine).FirstOrDefaultAsync();
+
+            var testnames = await _dbContext.Combine_Builder.Where(w => w.C_ID == event_combine.C_ID).Include(inc => inc.Test).Select(s => s.Test.Name).ToListAsync();
+
+            var eventCombineDetail = new ViewModel_CombineDetail
+            {
+                Combine_Name = event_combine.Combine.Name,
+                TestNames = testnames
+            };
+
+            return new JsonResult(JsonConvert.SerializeObject(eventCombineDetail));
         }
 
         //Get event(s) list based on name
@@ -640,15 +654,15 @@ namespace FXV_App.Controllers
         public async Task<IActionResult> GetEventsByName(string event_name)
         {
             var result = await _dbContext.Event
-                        .Where(w => w.Name.Contains(event_name))
+                        .Where(w => w.Name.ToLower().Contains(event_name.ToLower())).Include(inc=>inc.Event_Status).OrderBy(o => o.E_ID)
                         .Select(s => new ViewModel_Event
                         {
                             EventId = s.E_ID,
                             Name = s.Name,
                             Description = s.Description,
                             Location = s.Location,
-                            Time = s.Time,
-                            Date = s.Date.ToString("ddd MMM dd yyyy 'GMT'K"),
+                            Time = s.Time.ToString("h:mm tt"),
+                            Date = s.Date.ToString("MMM dd yyyy"),
                             Img_Path = s.Img_Path,
                             Registered = _dbContext.Event_Assigned_Attendee.Where(a => a.E_ID == s.E_ID).Count(),
                             Status = s.Event_Status.Status
@@ -677,7 +691,7 @@ namespace FXV_App.Controllers
                             Name = s.Name,
                             Description = s.Description,
                             Location = s.Location,
-                            Time = s.Time,
+                            Time = s.Time.ToString("h:mm tt"),
                             Date = s.Date.ToString("ddd MMM dd yyyy 'GMT'K"),
                             Img_Path = s.Img_Path,
                             Registered = _dbContext.Event_Assigned_Attendee.Where(a => a.E_ID == s.E_ID).Count(),

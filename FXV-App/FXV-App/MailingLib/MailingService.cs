@@ -21,12 +21,10 @@ namespace FXV.MailingLib
 
         private string emailSubjectForActivate = "FXV: Reset Your Password";
         private string linkForActivate = "https://localhost:5001/Activate/SignUpActivate?";  //local test
-        //private string linkForActivate = "https://www.fxv.co.nz/Activate/SignUpActivate?";  //Release
 
 
         private string emailSubjectForResetPwd = "FXV: Reset Your Password";
         private string linkForPwdReset = "https://localhost:5001/Password/Reset?";  //local test
-        //private string linkForPwdReset = "https://www.fxv.co.nz/Password/Reset?";  //Release
 
 
         private string token { get; set; }
