@@ -2,7 +2,7 @@
 
 ## [Live System (Beta)](https://www.fxv.co.nz/).
 
-NOTE:the LINK MAY TAKE A WHILE TO LOAD - you may have to be a little patient, but it will get there eventually!
+NOTE: the LINK MAY TAKE A WHILE TO LOAD - you may have to be a little patient, but it will get there eventually!
 Due to the system hosted on a testing server, not ready for commercial as currently the system is still under the developing stage.
 
 ## Features:
@@ -57,4 +57,4 @@ Due to the system hosted on a testing server, not ready for commercial as curren
 ###### Browse https://localhost:5001 to view the system.
 
 ##
-The system is owned by Shawn Chen, and only can be used for Force X Velocity.
+The system is owned by Shawn Chen (Lead developer) & Callum Good, and only can be used for Force X Velocity.
