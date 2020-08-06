@@ -56,4 +56,5 @@ Due to the system hosted on a testing server, not ready for commercial as curren
 ###### Runs the application in development mode.
 ###### Browse https://localhost:5001 to view the system.
 
-
+##
+The system is owned by Shawn Chen, and only can be used for Force X Velocity.
