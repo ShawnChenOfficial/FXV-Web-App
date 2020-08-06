@@ -42,8 +42,7 @@ Due to the system hosted on a testing server, not ready for commercial as curren
 
 ## step 3:
 
-###### Configure your mailling service information and Mysql connection information
-###### in appsettings.json
+###### Configure your mailling service information and Mysql connection information in appsettings.json
 
 ## Step 4:
 
