@@ -162,7 +162,6 @@ namespace FXV
                     name: "default",
                     template: "{controller=account}/{action=index}/{var?}");
             });
-
         }
     }
 }
