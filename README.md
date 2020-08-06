@@ -40,14 +40,20 @@ Due to the system hosted on a testing server, not ready for commercial as curren
 ###### Local server:
 ###### Open the project on Visual studio, or other compatible IDE
 
-## Step 3:
+## step 3:
+
+###### Configure your mailling service information and Mysql connection information
+###### in appsettings.json
+
+## Step 4:
 
 ###### Database update
 ###### Hint: project contains all migration files, only need to update database.
 ###### CLI: dotnet ef database update
 ###### Visual studio: Update-Database
 
-## Step 4:
+## Step 5:
+
 ###### Runs the application in development mode.
 ###### Browse https://localhost:5001 to view the system.
 
