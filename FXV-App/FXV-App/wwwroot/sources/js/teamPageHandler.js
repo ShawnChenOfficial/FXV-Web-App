@@ -208,6 +208,7 @@ var vueMembersMenu = new Vue({
                                 });
                             });
                             $('#members-list').find('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
+                            vueTeamsList.hasMore = false;
                         }
                         catch (e) {
                             $("#body-content").html(response.data);

@@ -281,7 +281,14 @@ var vueTeamsList = new Vue({
                                 });
                             });
 
-                            $('#teams-list').find('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
+                            if (json.length < 10) {
+                                $('#teams-list').find('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
+                                vueTeamsList.hasMore = false;
+                            }
+                            else {
+                                $('#teams-list').find('#more').removeAttr('disabled').removeClass('text-muted').addClass('text-white').html("More...");
+                                vueTeamsList.hasMore = true;
+                            }
                         }
                         catch (e) {
                             $("#body-content").html(response.data);
@@ -399,6 +406,7 @@ var vueMembersMenu = new Vue({
                                 });
                             });
                             $('#members-list').find('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
+                            vueTeamsList.hasMore = false;
                         }
                         catch (e) {
                             $("#body-content").html(response.data);

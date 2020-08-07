@@ -1,5 +1,4 @@
 ﻿$(window).on('load', function () {
-    $('#sidebar-extended-trigger-close').click();
     SuccessTurnToParentPage("Welcome",true);
 });
 

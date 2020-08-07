@@ -152,7 +152,7 @@ Vue.component('test-list-item-extend', {
             <div class="text-center col-md-12 offset-md-0 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 row p-0">\
                 <div class="col-4 p-0">\
                     <div class="promiex pl-3 pr-3 mt-3 text-FXV">\
-                        <h4 class="font-weight-bold mt-1">Promiex</h4>\
+                        <h4 class="font-weight-bold mt-1">Second</h4>\
                         <h4 class="medium-bold promiex-score mt-1">{{promiex_score}}</h4>\
                         <div class="promiex-profile-img" :style="{ backgroundImage: `url(${promiex_profile_img})` }"></div>\
                         <h5>{{promiex_name}}</h5>\
@@ -178,7 +178,7 @@ Vue.component('test-list-item-extend', {
                 </div>\
                 <div class="col-4 p-0">\
                     <div class="bronze pl-3 pr-3 mt-3 text-FXV">\
-                        <h4 class="font-weight-bold mt-1">Bronze</h4>\
+                        <h4 class="font-weight-bold mt-1">Third</h4>\
                         <h4 class="medium-bold bronze-score mt-1">{{bronze_score}}</h4>\
                         <div class="bronze-profile-img" :style="{ backgroundImage: `url(${bronze_profile_img})` }"></div>\
                         <h5>{{bronze_name}}</h5>\
@@ -293,7 +293,7 @@ var vueTestMenu = new Vue({
                             })
                         });
                         $('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
-                        vueOrgList.hasMore = false;
+                        vueTestList.hasMore = false;
                     }
                 }).catch(error => {
                     $("#body-content").html(error.response);

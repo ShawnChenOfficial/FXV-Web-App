@@ -118,14 +118,49 @@
     .list-item-category-block {
         display: none;
     }
+    .list-item-block-sm-hide {
+        display: none;
+    }
+
+    .list-item-block-sm-show {
+        display: block;
+    }
 }
 
 @media(min-width:576px) {
     .list-item-category-block {
         display: block;
     }
+
+    .list-item-block-sm-hide {
+        display: block;
+    }
+
+    .list-item-block-sm-show {
+        display: none;
+    }
+}
+@media(min-width:768px) {
+
+    .list-item-block-md-hide {
+        display: none;
+    }
+
+    .list-item-block-md-show {
+        display: block;
+    }
 }
 
+@media(max-width:767px) {
+
+    .list-item-block-md-hide {
+        display: block;
+    }
+
+    .list-item-block-md-show {
+        display: none;
+    }
+}
 .list-item-extend {
     height: auto;
     transform: scaleY(1);
@@ -136,73 +171,6 @@
     transform: scaleY(0);
     transition: transform 0s cubic-bezier(0.1, 0.4, 0.6, 1);
     max-height: 0;
-}
-
-.promiex {
-    border: 2px solid #C2C2C6;
-    width: 145px;
-    height: max-content;
-    border-radius: 15px;
-    margin: auto;
-}
-
-.promiex-score {
-    color: #C2C2C6;
-}
-
-.promiex-profile-img {
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center !important;
-    margin: auto;
-    border-radius: 3rem;
-    height: 3.5rem;
-    width: 3.5rem;
-}
-
-.bronze {
-    border: 2px solid #EEAF42;
-    width: 145px;
-    height: max-content;
-    border-radius: 15px;
-    margin: auto;
-}
-
-.bronze-score {
-    color: #EEAF42;
-}
-
-.bronze-profile-img {
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center !important;
-    margin: auto;
-    border-radius: 3rem;
-    height: 3.5rem;
-    width: 3.5rem;
-}
-
-
-.topAthlete {
-    border: 2px solid #FFDD00;
-    width: 170px;
-    height: max-content;
-    border-radius: 20px;
-    margin: auto;
-}
-
-.topAthlete-score {
-    color: #FFDD00;
-}
-
-.topAthlete-profile-img {
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center !important;
-    margin: auto;
-    border-radius: 3rem;
-    height: 5rem;
-    width: 5rem;
 }
 
 .display-inline-flex {
@@ -264,13 +232,7 @@
     display: none !important;
 }
 
-
-
-.yellow-divider-bottom {
-    margin-top: 1rem !important;
-    border-bottom: 3px solid #FFDD00;
-    width: auto;
-}
+/*organization & team page thumbs*/
 
 @media(min-width:1201px) {
     .org-img, .team-img {
@@ -351,4 +313,113 @@
     width: auto;
     background-repeat: no-repeat;
     background-size: contain;
+}
+
+/* event status color */
+.text-event-pending {
+    color: #6DFD30;
+}
+
+.text-event-started {
+    color: #FF0000;
+}
+
+.text-event-closed {
+    color: #B2B2B2;
+}
+
+/*event page slider*/
+
+.carousel-caption {
+    bottom: 0 !important;
+}
+
+.carousel-item {
+    width: 60%;
+    margin-left: 20%;
+}
+
+    .carousel-item img {
+        --width: 57vw;
+        height: calc(var(--width) * 0.6) !important;
+        width: var(--width) !important;
+    }
+
+.slider-to-right {
+    right: -5px;
+}
+
+/*divider bar*/
+.yellow-divider-bottom {
+    margin-top: 1rem !important;
+    border-bottom: 3px solid #FFDD00;
+    width: auto;
+}
+
+/*ranks*/
+.promiex {
+    border: 2px solid #C2C2C6;
+    width: 145px;
+    height: max-content;
+    border-radius: 15px;
+    margin: auto;
+}
+
+.promiex-score {
+    color: #C2C2C6;
+}
+
+.promiex-profile-img {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    margin: auto;
+    border-radius: 3rem;
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+.bronze {
+    border: 2px solid #EEAF42;
+    width: 145px;
+    height: max-content;
+    border-radius: 15px;
+    margin: auto;
+}
+
+.bronze-score {
+    color: #EEAF42;
+}
+
+.bronze-profile-img {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    margin: auto;
+    border-radius: 3rem;
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+
+.topAthlete {
+    border: 2px solid #FFDD00;
+    width: 170px;
+    height: max-content;
+    border-radius: 20px;
+    margin: auto;
+}
+
+.topAthlete-score {
+    color: #FFDD00;
+}
+
+.topAthlete-profile-img {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    margin: auto;
+    border-radius: 3rem;
+    height: 5rem;
+    width: 5rem;
 }

@@ -674,16 +674,14 @@ namespace FXV_App.Controllers
         //
         //Get event(s) list based on date and time
         //
-        //??????
         [HttpGet("{start_event_date}/{end_event_date}/")]
-        public async Task<IActionResult> GetEventsListByDateTime(DateTime start_event_date, DateTime end_event_date)
+        public async Task<IActionResult> GetEventsByDate(DateTime start_event_date, DateTime end_event_date)
         {
             var result = await _dbContext.Event
                         .Where(w =>
                            DateTime.Compare(w.Date.Date, start_event_date.Date) >= 0
                            &&
                            DateTime.Compare(w.Date.Date, end_event_date.Date) <= 0
-
                         )
                         .Select(s => new ViewModel_Event
                         {
@@ -692,7 +690,7 @@ namespace FXV_App.Controllers
                             Description = s.Description,
                             Location = s.Location,
                             Time = s.Time.ToString("h:mm tt"),
-                            Date = s.Date.ToString("ddd MMM dd yyyy 'GMT'K"),
+                            Date = s.Date.ToString("MMM dd yyyy"),
                             Img_Path = s.Img_Path,
                             Registered = _dbContext.Event_Assigned_Attendee.Where(a => a.E_ID == s.E_ID).Count(),
                             Status = s.Event_Status.Status
