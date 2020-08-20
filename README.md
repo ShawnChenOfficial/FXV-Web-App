@@ -1,6 +1,6 @@
 # FXV management system
 
-###### Currently, I am still working on this system.
+###### The system is still under developing mode.
 
 ## [Live System (Beta)](https://www.fxv.co.nz/).
 
