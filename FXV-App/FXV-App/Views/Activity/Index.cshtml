@@ -1,0 +1,511 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+    Layout = "_Layout";
+    var isSplittable = TempData["Splittable"];
+}
+<style>
+    .activity-icons-4rem {
+        font-size: 4rem;
+    }
+
+    .activity-icons-3rem {
+        font-size: 3rem;
+    }
+
+    @@media(max-width:767px) {
+        .activity-icons-4rem {
+            font-size: 3rem;
+        }
+
+        .activity-icons-3rem {
+            font-size: 2rem;
+        }
+    }
+
+    .search-input-result-list {
+        position: absolute;
+        background: white;
+        z-index: 1000;
+        border: 1px solid black;
+        width: 175px;
+        max-height: 300px;
+        overflow: scroll;
+        list-style: none;
+    }
+
+    .vertical-middle {
+        margin-top: -50%;
+        transform: translate(0, 50%);
+    }
+
+    .member-list-zoon {
+        min-height: 400px;
+        overflow: scroll;
+    }
+
+    .selected {
+        background: #ffdd00 !important;
+        color: black !important;
+    }
+
+    .list-option:hover {
+        background: #ffdd00 !important;
+        color: black !important;
+    }
+
+    .border-FXV, .selected-list {
+        border: 2px solid #ffdd00;
+    }
+
+        .border-FXV:hover, .selected-list:hover {
+            -webkit-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+            -moz-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Firefox 3.5 - 3.6 */
+            box-shadow: 0px 0px 5px 1px #ffdd00 !important;
+        }
+
+    .unslected-list {
+        border: 2px solid #92918e;
+    }
+
+        .unslected-list:hover {
+            -webkit-box-shadow: 0px 0px 5px 1px #92918e !important; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+            -moz-box-shadow: 0px 0px 5px 1px #92918e !important; /* Firefox 3.5 - 3.6 */
+            box-shadow: 0px 0px 5px 1px #92918e !important;
+        }
+</style>
+<!--ActicvitySetUp-->
+<div class="content p-0 mt-3">
+    <form class="container pb-5" asp-action="RunActivity" asp-controller="Activity" method="post">
+        <input id="TestId" name="TestId" value="@TempData["TestId"]" readonly hidden/>
+        <h2 class="medium-bold text-left font-weight-bold text-FXV">Test Setup</h2>
+        <div class="container">
+            <div class="container" id="participantsSetUp">
+                <h3 class="text-white">Participants</h3>
+                <div>
+                    <input v-on:keyup="Search" v-on:focus="searching=true" placeholder="Search..." v-model="SearchText">
+                    <ul v-if="searching" class="search-input-result-list pl-0">
+                        <li is="searchresult" v-for="result in results" v-bind:key="result.id" v-bind:name="result.name"
+                            v-on:addtoselected="AddToSelected(result.uid, result.name)"></li>
+                    </ul>
+                </div>
+                <div class="container mt-4">
+                    <div class="row">
+                        <h3 class="text-center text-FXV col-4 col-md-5">Selected list</h3>
+                        <h3 class="text-center text-white col-4 offset-4 col-md-5 offset-md-2">
+                            Removed list
+                            <span class="pl-2 material-icons pointer" data-toggle="tooltip" title="The removed list is a collection of athletes which you removed from selected list,
+                            and will not be involved in this test activity. Only the athletes within selected list will be the attendees of this test activity.">help_outline</span>
+                        </h3>
+                        <div class="col-4 col-md-5 bg-light rounded member-list-zoon p-0 selected-list">
+                            <p is="selected_list" v-for="item in selected" v-bind:key="item.id" v-bind:id="item.id" v-bind:name="item.name" v-bind:uid="item.uid" v-bind:checked="item.checked"
+                               v-on:checkedforremovedlist="CheckedForRemovedList(item.uid, item.name)"></p>
+                        </div>
+                        <div class="col-4 col-md-2 text-center text-white">
+                            <div class="vertical-middle">
+                                <p class="pointer" v-on:click="MoveToRemovedList()" data-toggle="tooltip" title="Move highlighted athletes in selected list to unselected list">
+                                    <span class="material-icons activity-icons-4rem">
+                                        keyboard_arrow_right
+                                    </span>
+                                </p>
+                                <p class="pointer" v-on:click="MoveAllToRemovedList()" data-toggle="tooltip" title="Move all selected athletes to unselected list">
+                                    <span class="material-icons activity-icons-3rem">
+                                        skip_next
+                                    </span>
+                                </p>
+                                <p class="pointer" v-on:click="MoveToSelected()" data-toggle="tooltip" title="Move highlighted athletes in removed list to selected list">
+                                    <span class="material-icons activity-icons-4rem">
+                                        keyboard_arrow_left
+                                    </span>
+                                </p>
+                                <p class="pointer" v-on:click="MoveAllToSelected()" data-toggle="tooltip" title="Move all removed athletes to selected list">
+                                    <span class="material-icons activity-icons-3rem">
+                                        skip_previous
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4 col-md-5 bg-light rounded member-list-zoon p-0 unslected-list">
+                            <p is="removed_list" v-for="item in removed" v-bind:key="item.uid" v-bind:name="item.name" v-bind:id="item.uid" v-bind:checked="item.checked"
+                               v-on:checkedforselectedlist="CheckedForSelectedList(item.uid, item.name)"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if ((bool)isSplittable == true)
+        {
+            <div class="container mt-4">
+                <div class="container" id="testSplitSetUp">
+                    <h3 class="text-white">Splits</h3>
+                    <div class="row">
+                        <div class="col-6 col-md-3 col-lg-2 form-group">
+                            <label class="control-label text-white">Number Of Splits?</label>
+                            <input class="form-control" v-model="Number_Of_Splits" type="number" min="0">
+                        </div>
+                        <div v-if="Number_Of_Splits > 0" class="col-12 mt-4">
+                            <label class="text-white">Which tests are bright used for each split?</label>
+                            <div is="split-item" v-for="item in splits" v-bind:key="item.id" v-bind:id="item.id" v-bind:currenttestid="@TempData["TestId"]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="w-100 text-center mt-5">
+            <a class="btn btn-warning-customized" type="button" href="/Tests">Cancel</a>
+            <input class="btn btn-warning-customized" type="submit" value="Run"/>
+        </div>
+    </form>
+</div>
+<script>
+    var _global = new Vue({
+        data() {
+            return {
+                split_ids: []
+            }
+        }
+    });
+
+    Vue.component('split-test-search-result', {
+        template: '\
+            <li class="pl-2 pointer list-option" v-on:click="$emit(\'selectsplittest\')">{{name}}</li>\
+            \
+        ',
+        props: ['name']
+    });
+
+    Vue.component('split-item', {
+        template: '\
+            <div class="mt-2">\
+            <label> Split {{id + 1}}</label>\
+        <div>\
+            <input placeholder="Search split test name" v-on:focus="searching = true" v-on:keyup="Search" v-model="SearchText"/>\
+                    <ul v-if="searching" class="search-input-result-list pl-0">\
+                        <li is="split-test-search-result" v-for="result in results" v-bind:key="result.id" v-bind:name="result.name" v-on:selectsplittest="SelectSplitTest(result.splittestid, result.name)"></li >\
+                    </ul>\
+            </ul>\
+            <input v-if="SelectedSplitId > 0" :id="[\'SplitTestIds_\' + id]" :name="[\'SplitTestIds[\' + id + \']\']" :value="SelectedSplitId" readonly hidden/>\
+            <input v-if="SelectedSplitId > 0" v-model="SelectedSplitName" readonly/>\
+        </div></div>\
+        \
+        ',
+        props: ['id', 'currenttestid'],
+        data() {
+            return {
+                SearchText: '',
+                results: [],
+                NextToDoId: 0,
+                SelectedSplitName: '',
+                searching: false,
+                SelectedSplitId: 0,
+            }
+        },
+        watch: {
+            SearchText: 'CheckSearchText'
+        },
+        methods: {
+            CheckSearchText: function () {
+                this.SearchText = this.SearchText.toString().replace(/[\\/<>'"]/g, '');
+            },
+            Search: _.debounce(
+                function () {
+                    this.results = [];
+                    this.NextToDoId = 0;
+                    if (this.SearchText == "") {
+                        return;
+                    }
+                    this.SendSearchRequest();
+                }, 500),
+            SendSearchRequest: function () {
+                axios.get("/api/GetSplitTestsByName/" + this.SearchText + "/" + this.currenttestid).then(response => {
+                    var str = response.data.toString();
+                    if (str.indexOf("<!--This is the login layout-->") == 0) {
+                        alert("The system detects that you have not operated for a long time, please login again");
+                        document.clear();
+                        location.reload();
+                    }
+                    else {
+                        var json = JSON.parse(response.data);
+                        $.each(json, (index, item) => {
+                            this.results.push({
+                                id: this.NextToDoId++,
+                                name: item.Name,
+                                splittestid: item.TestId
+                            })
+                        });
+                    }
+                }).catch(error => {
+                    $("#body-content").html(error.response);
+                })
+            },
+            SelectSplitTest: function (id, name) {
+                if (_global.split_ids.indexOf(id) > -1) {
+                    alert("The split '" + name + "' exists.");
+                    return;
+                }
+                this.SelectedSplitName = name;
+                this.SearchText = '';
+                this.searching = false;
+                this.SelectedSplitId = id;
+                _global.split_ids.splice(_global.split_ids.indexOf(id), 1);
+                _global.split_ids.push(id);
+            }
+        }
+    });
+
+    new Vue({
+        el: '#testSplitSetUp',
+        data: {
+            Number_Of_Splits: 0,
+            splits: [],
+            NextToDoId: 0
+        },
+        watch: {
+            Number_Of_Splits: 'AlterSplits'
+        },
+        methods: {
+            AlterSplits: function () {
+                if (this.splits.length == 0) {
+                    for (var x = 0; x < this.Number_Of_Splits; x ++) {
+                        this.splits.push({
+                            id: this.NextToDoId++
+                        });
+                    }
+                }
+                else if (this.splits.length < this.Number_Of_Splits) {
+                    var number_to_add = this.Number_Of_Splits - this.splits.length;
+                    for (var x = 0; x < number_to_add; x++) {
+                        this.splits.push({
+                            id: this.NextToDoId++
+                        });
+                    }
+                }
+                else {
+                    var number_to_remove = this.splits.length - this.Number_Of_Splits;
+                    for (var x = 0; x < number_to_remove; x++) {
+                        this.splits.pop();
+                        _global.split_ids.pop();
+                        --this.NextToDoId;
+                    }
+                }
+            }
+        }
+    });
+
+  new Vue({
+        el:'#participantsSetUp',
+        data: {
+            searching: false,
+            results: [],
+            selected: [],
+            removed: [],
+            NextToDoId: 0,
+            SearchText: '',
+            SelectedKeyId: 0
+        },
+        created() {
+        },
+        watch: {
+            SearchText: 'CheckSearchText',
+        },
+      methods: {
+          CheckSearchText: function () {
+              this.SearchText = this.SearchText.toString().replace(/[\\/<>'"]/g, '');
+          },
+          Search: _.debounce(
+              function () {
+                  this.results = [];
+                  this.NextToDoId = 0;
+                  if (this.SearchText == "") {
+                      return;
+                  }
+                  this.SendSearchRequest();
+              }, 500),
+          SendSearchRequest: function () {
+              axios.get("/api/GetUsersByName/" + this.SearchText).then(response => {
+                  var str = response.data.toString();
+                  if (str.indexOf("<!--This is the login layout-->") == 0) {
+                      alert("The system detects that you have not operated for a long time, please login again");
+                      document.clear();
+                      location.reload();
+                  }
+                  else {
+                      var json = JSON.parse(response.data);
+                      $.each(json, (index, item) => {
+                          this.results.push({
+                              id: this.NextToDoId++,
+                              name: item.FirstName + item.LastName,
+                              uid: item.UId
+                          })
+                      });
+                  }
+              }).catch(error => {
+                  $("#body-content").html(error.response);
+              })
+          },
+          IsExistInSelectedList: function (uid) {
+              var result = false;
+              this.selected.forEach(item => {
+                  if (item.uid == uid) {
+                      result = true;
+                  }
+              })
+              return result;
+          },
+          IsExistInRemovedList: function (uid) {
+              var result = false;
+              this.removed.forEach(item => {
+                  if (item.uid == uid) {
+                      result = true;
+                  }
+              })
+              return result;
+          },
+          AddToSelected: function (uid, name) {
+              var inSelected = this.IsExistInSelectedList(uid);
+              var inRemoved = this.IsExistInRemovedList(uid)
+
+              if (!inSelected && !inRemoved) {
+                  this.selected.push({
+                      id: this.SelectedKeyId ++,
+                      name: name,
+                      uid: uid,
+                      checked: false
+                  })
+              }
+              else if (!inSelected && inRemoved){
+                  alert("This athlete exists in unselected list");
+              }
+
+              else if (inSelected && !inRemoved) {
+                  alert("This athlete exists been selected.");
+              }
+              this.searching = false;
+              this.SearchText = '';
+              this.ReOrderSelectedListId();
+          },
+          //checked items for moving to selected list
+          CheckedForSelectedList: function (uid, name) {
+              this.removed.forEach(item => {
+                  if (item.uid == uid) {
+                      item.checked = !item.checked;
+                  }
+              })
+          },
+          //checked items for moving to removed list
+          CheckedForRemovedList: function (uid, name) {
+              this.selected.forEach(item => {
+                  if (item.uid == uid) {
+                      item.checked = !item.checked;
+                  }
+              })
+          },
+          MoveToRemovedList: function () {
+              for (var i = 0; i < this.selected.length; i++) {
+                  var item = this.selected[i];
+                  if (item.checked && !this.IsExistInRemovedList(item.uid)) {
+                      this.removed.push({
+                          name: item.name,
+                          uid: item.uid,
+                          checked: false
+                      });
+                      this.selected.splice(this.selected.indexOf(item), 1);
+                      i--;
+                  }
+                  else if (item.selected && this.IsExistInRemovedList(item.uid)) {
+                      this.selected.splice(this.selected.indexOf(item), 1);
+                      i--;
+                  }
+              }
+              this.ReOrderSelectedListId();
+          },
+          MoveToSelected: function () {
+              for (var i = 0; i < this.removed.length; i++) {
+                  var item = this.removed[i];
+                  if (item.checked && !this.IsExistInSelectedList(item.uid)) {
+                      this.selected.push({
+                          id: this.SelectedKeyId++,
+                          name: item.name,
+                          uid: item.uid,
+                          checked: false
+                      });
+                      this.removed.splice(this.removed.indexOf(item), 1);
+                      i--;
+                  }
+                  else if (this.IsExistInSelectedList(item.uid)) {
+                      this.removed.splice(this.removed.indexOf(item), 1);
+                      i--;
+                  }
+              }
+              this.ReOrderSelectedListId();
+          },
+        MoveAllToSelected: function () {
+              for(var i = 0; i < this.removed.length; i++) {
+                  var item = this.removed[i];
+                  if (!this.IsExistInSelectedList(item.uid)) {
+                      this.selected.push({
+                          id: this.SelectedKeyId++,
+                          name: item.name,
+                          uid: item.uid,
+                          checked: false
+                      });
+                      this.removed.splice(this.removed.indexOf(item), 1);
+                      i--;
+                  }
+                  else if (this.IsExistInSelectedList(item.uid)) {
+                      this.removed.splice(this.removed.indexOf(item), 1);
+                      i--;
+                  }
+            }
+            this.ReOrderSelectedListId();
+          },
+          MoveAllToRemovedList: function () {
+              for (var i = 0; i < this.selected.length; i++) {
+                  var item = this.selected[i];
+                  if (!this.IsExistInRemovedList(item.uid)) {
+                      this.removed.push({
+                          name: item.name,
+                          uid: item.uid,
+                          checked: false
+                      });
+                      this.selected.splice(this.selected.indexOf(item), 1);
+                      i--;
+                  }
+                  else if (this.IsExistInRemovedList(item.uid)) {
+                      this.selected.splice(this.selected.indexOf(item), 1);
+                      i--;
+                  }
+              }
+              this.ReOrderSelectedListId();
+          },
+          ReOrderSelectedListId: function () {
+              this.SelectedKeyId = 0;
+              this.selected.forEach(item => {
+                  item.id = this.SelectedKeyId++
+              });
+          }
+        }
+    })
+
+    Vue.component('searchresult', {
+        template: '\
+            <li class="pl-2 pointer list-option" v-on:click="$emit(\'addtoselected\')">{{name}}</li>\
+            \
+        ',
+        props:['name','uid']
+    });
+    Vue.component('selected_list', {
+        template: '\
+            <p :class="{\'mb-0 pl-2 pointer\':true , \'selected\': checked}" v-on:click="$emit(\'checkedforremovedlist\')"><strong>{{name}}</strong><input :id="[\'AttendeeIds_\' + id]" :name="[\'AttendeeIds[\' + id + \']\']" :value="uid" readonly hidden/></p>\
+            \
+        ',
+        props: ['name', 'uid', 'checked', 'id']
+    });
+    Vue.component('removed_list', {
+        template: '\
+            <p :class="{\'mb-0 pl-3 pointer\':true , \'selected\': checked}" v-on:click="$emit(\'checkedforselectedlist\')"><strong>{{name}}</strong></p>\
+            \
+        ',
+        props: ['name', 'uid', 'checked']
+    });
+</script>

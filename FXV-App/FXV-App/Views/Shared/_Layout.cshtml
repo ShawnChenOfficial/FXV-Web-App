@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "";
 }
 <html lang="en">
 <head>
@@ -21,15 +21,20 @@
     <!-- Site CSS -->
     <link rel="stylesheet" type="text/css" href="/sources/css/site.css" />
     <link rel="stylesheet" type="text/css" href="/sources/css/site-v0.1.1.css" />
+    <link rel="stylesheet" type="text/css" href="/sources/css/site-v0.1.2.css" />
     <link href="/sources/assets/css/material-dashboard.min.css?v=2.1.0" rel="stylesheet">
+    <!-- Vue-->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <!-- Lodash -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js" differ></script>
     @if ((await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
     {
-        <link rel="stylesheet" type="text/css" href="/sources/css/sidebar-lower-permission.css" />
-    }
+<link rel="stylesheet" type="text/css" href="/sources/css/sidebar-lower-permission.css" />}
     @if (!(await AuthorizationService.AuthorizeAsync(User, "Athlete")).Succeeded)
     {
-        <link rel="stylesheet" type="text/css" href="/sources/css/sidebar-higher-permission.css" />
-    }
+<link rel="stylesheet" type="text/css" href="/sources/css/sidebar-higher-permission.css" />}
     <script src="/sources/jquery/jquery-3.4.1.min.js"></script>
 </head>
 <body id="body" class="dark-edition">
@@ -71,33 +76,33 @@
                     </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded)
                     {
-                        <li id="Organizations" class="nav-item pt-0" onclick="tags_onclick(this)">
-                            <a class="nav-link mt-0">
+                        <li id="Organizations" class="nav-item pt-0">
+                            <a class="nav-link mt-0" asp-action="Index" asp-controller="Organizations">
                                 <i class="material-icons text-FXV">people</i>
                                 <p>Organizations</p>
                             </a>
                         </li>
                     }
-                    <li id="Leaderboards" class="nav-item" onclick="tags_onclick(this)">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="Leaderboards" class="nav-item">
+                        <a class="nav-link mt-0" asp-action="Leaderboards" asp-controller="Leaderboards">
                             <i class="material-icons text-FXV">assessment</i>
                             <p>Leaderboards</p>
                         </a>
                     </li>
-                    <li id="Tests" class="nav-item dropdown" onclick="tags_onclick(this)">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="Tests" class="nav-item dropdown">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="Tests">
                             <i class="material-icons text-FXV">fitness_center</i>
                             <p>Tests</p>
                         </a>
                     </li>
-                    <li id="Combines" class="nav-item" onclick="tags_onclick(this)">
-                        <a class="nav-link mt-0">
+                    <li id="Combines" class="nav-item">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="Combines">
                             <i class="material-icons text-FXV">assignment</i>
                             <p>Combines</p>
                         </a>
                     </li>
-                    <li id="Events" class="nav-item" onclick="tags_onclick(this)">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="Events" class="nav-item">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="Events">
                             <i class="material-icons text-FXV">date_range</i>
                             <p>Events</p>
                         </a>
@@ -123,8 +128,10 @@
                         }
                         @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
                         {
-                            <h3 class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></h3>
-                            <h1 id="AllUsers" class="text-center text-FXV mb-0 medium-bold-500" onclick="tags_onclick(this)" style="cursor: pointer; font-size:5rem; ">@ViewData["athletes_num"]</h1>
+                            <a asp-action="AllUsers" asp-controller="AllUsers">
+                                <h3 class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></h3>
+                                <h1 id="AllUsers" class="text-center text-FXV mb-0 medium-bold-500" style="cursor: pointer; font-size:5rem; ">@ViewData["athletes_num"]</h1>
+                            </a>
                         }
                         <div class="nav-link nav-bottom-item-triangle row">
                             <div class="col-6 offset-1 text-white" style="cursor: pointer">
@@ -155,7 +162,7 @@
                 <div>
                     <div class="row mt-3" style="cursor:pointer" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])">
                         <img src="/sources/img/Logo.png" alt="Image" class="col-10 offset-1 mb-2">
-                        <img class="col-10 offset-1 round-circle" style="height:3.5rem;width:3.5rem;" src=@ViewData["user_img_path"] alt="Image" data-toggle="tooltip" data-placement="right" title="Profile">
+                        <img class="col-10 offset-1 round-circle" style="min-height: 3.5rem; max-height: 3.5rem; width: 100%;" src=@ViewData["user_img_path"] alt="Image" data-toggle="tooltip" data-placement="right" title="@ViewData["FirstName"]">
                     </div>
                 </div>
             </div>
@@ -168,29 +175,29 @@
                     </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Organization")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "Manager")).Succeeded)
                     {
-                        <li id="organizations" class="nav-item pt-0" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Organizations">
-                            <a class="nav-link mt-0">
+                        <li id="organizations" class="nav-item pt-0" data-toggle="tooltip" data-placement="right" title="Organizations">
+                            <a class="nav-link mt-0" asp-action="Index" asp-controller="organizations">
                                 <i class="material-icons text-FXV">people</i>
                             </a>
                         </li>
                     }
-                    <li id="leaderboards" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Leaderboards">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="leaderboards" class="nav-item" data-toggle="tooltip" data-placement="right" title="Leaderboards">
+                        <a class="nav-link mt-0" asp-action="leaderboards" asp-controller="leaderboards">
                             <i class="material-icons text-FXV">assessment</i>
                         </a>
                     </li>
-                    <li id="tests" class="nav-item dropdown" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Tests">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="tests" class="nav-item dropdown" data-toggle="tooltip" data-placement="right" title="Tests">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="tests">
                             <i class="material-icons text-FXV">fitness_center</i>
                         </a>
                     </li>
-                    <li id="combines" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Combines">
-                        <a class="nav-link mt-0">
+                    <li id="combines" class="nav-item" data-toggle="tooltip" data-placement="right" title="Combines">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="combines">
                             <i class="material-icons text-FXV">assignment</i>
                         </a>
                     </li>
-                    <li id="events" class="nav-item" onclick="tags_onclick(this)" data-toggle="tooltip" data-placement="right" title="Events">
-                        <a class="nav-link mt-0" href="javascript:void(0)">
+                    <li id="events" class="nav-item" data-toggle="tooltip" data-placement="right" title="Events">
+                        <a class="nav-link mt-0" asp-action="Index" asp-controller="events">
                             <i class="material-icons text-FXV">date_range</i>
                         </a>
                     </li>
@@ -233,10 +240,12 @@
                     @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
                     {
                         <li class="nav-item nav-bottom-item-collapse w-100">
-                            <div id="allusers" class="rotateZ-minus-90" onclick="tags_onclick(this)" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="See All System Users">
-                                <p class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></p>
-                                <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["athletes_num"]</p>
-                            </div>
+                            <a asp-action="AllUsers" asp-controller="AllUsers" data-toggle="tooltip" data-placement="right" title="All Athletes">
+                                <div id="allusers" class="rotateZ-minus-90 pointer">
+                                    <p class="text-center text-white" style="cursor: pointer"><strong>Total Athletes</strong></p>
+                                    <p class="text-center text-FXV mb-0 medium-bold-500 font-2rem">@ViewData["athletes_num"]</p>
+                                </div>
+                            </a>
                             <div id="help" class="nav-item" style="cursor: pointer;">
                                 <a class="nav-link mt-0" data-toggle="tooltip" data-placement="right" title="FAQs" href="javascript:void(0)">
                                     <i class="material-icons text-FXV">help</i>
@@ -271,12 +280,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="javscript:void(0)" data-toggle="tooltip" title="Profile" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])">
+                                <a class="nav-link" href="javascript:void(0)" onclick="directToUserProfileForCurrentUser(@ViewData["uid"])" data-toggle="tooltip" title="Profile">
                                     <i class="material-icons text-white">person</i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="javscript:void(0)" data-toggle="tooltip" title="Settings" id="Settings" onclick="tags_onclick(this)">
+                                <a class="nav-link" data-toggle="tooltip" title="Settings" id="Settings" asp-action="Settings" asp-controller="Settings">
                                     <i class="material-icons text-white">settings</i>
                                 </a>
                             </li>
@@ -296,8 +305,6 @@
         </div>
     </div>
     <partial name="_ValidationScriptsPartial" />
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
     <!--   Core JS Files   -->
     <script src="/sources/assets/js/core/popper.min.js"></script>
     <script src="/sources/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
@@ -308,8 +315,6 @@
     <script src="/sources/assets/js/plugins/chartist.min.js"></script>
     <script src="/sources/js/layoutHandler.js"></script>
     <script src="/sources/js/historyCustomizedRouting.js"></script>
-    <!-- Lodash -->
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171792787-2"></script>
 

@@ -34,7 +34,7 @@ namespace FXV_App.Controllers
         [Authorize("All")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult Events()//loading the recommanded events which are decided to show by Admin
+        public IActionResult Index()//loading the recommanded events which are decided to show by Admin
         {
             //waiting for decision of slider area
 
@@ -86,12 +86,12 @@ namespace FXV_App.Controllers
                             long fileSize = img.Length;
                             var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                             string webRootPath = _hostingEnvironment.WebRootPath;
-                            var filePath = webRootPath + "./sources/eventImg/" + newFileName;
+                            var filePath = webRootPath + "/sources/eventImg/" + newFileName;
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
                                 await img.CopyToAsync(stream);
                             }
-                            Img_Path = "./sources/eventImg/" + newFileName;
+                            Img_Path = "/sources/eventImg/" + newFileName;
                         }
                     }
                     else if (eventBuilder.Image == null)

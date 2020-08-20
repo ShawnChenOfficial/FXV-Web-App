@@ -1,6 +1,7 @@
 ﻿@model FXV.ViewModels.CombineBuilder
 
 @{
+    Layout = "_Layout";
 }
 
 <style>
@@ -137,7 +138,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-xl-5 pt-4">
-                            <img id="combineImg" class="w-100" src="/sources/img/combineImg.png" style="object-fit: contain;" alt="..."/>
+                            <img id="combineImg" class="w-100" src="/sources/img/combineImg.png" style="object-fit: contain;" alt="..." />
                             <div class="pt-2 row">
                                 <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Combine Image</h3>
                                 <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />

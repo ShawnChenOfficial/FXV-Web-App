@@ -1,5 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
+@{
+    Layout = "_Layout";
+}
 <!--Organizations-->
 <div class="content p-0 mt-3">
     <div class="container pb-5">
@@ -14,7 +17,7 @@
                     {
                         <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
                         <div>
-                            <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddOrg()">Add</a>
+                            <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create">Add</a>
                         </div>
                     }
                 </div>

@@ -3,14 +3,16 @@ using System;
 using FXV.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FXV_App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200815051135_20200815_v1")]
+    partial class _20200815_v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -667,9 +669,8 @@ namespace FXV_App.Migrations
                     b.Property<int>("HigherScore")
                         .IsConcurrencyToken();
 
-                    b.Property<bool>("IsSplittable");
-
-                    b.Property<bool>("IsVerified");
+                    b.Property<bool>("IsVerified")
+                        .IsConcurrencyToken();
 
                     b.Property<double>("LowerCalc")
                         .IsConcurrencyToken();
@@ -699,8 +700,6 @@ namespace FXV_App.Migrations
 
                     b.Property<string>("Unit")
                         .IsConcurrencyToken();
-
-                    b.Property<bool>("UsedAsSplit");
 
                     b.HasKey("Test_ID");
 

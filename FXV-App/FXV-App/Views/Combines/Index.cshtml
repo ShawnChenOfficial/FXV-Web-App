@@ -1,7 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
+@{
+    Layout = "_Layout";
+}
 <!--Combines-->
-<div id="deleteConfirmPopUp" v-bind:class="{modal: true, 'display-block': Show}" >
+<div id="deleteConfirmPopUp" v-bind:class="{modal: true, 'display-block': Show}">
     <!-- Modal content -->
     <fieldset class="mt-5 col-10 offset-1">
         <legend class="text-FXV text-center w-auto font-2rem medium-bold-400">Delete</legend>
@@ -24,7 +27,7 @@
                 {
                     <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
                     <div>
-                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddCombine()">Add</a>
+                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create" >Add</a>
                     </div>
                 }
             </div>

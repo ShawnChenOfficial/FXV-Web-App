@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FXV.Data;
 using FXV.JwtManager;
 using FXV.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FXV_App.CustomizeControllers
 {
+    [Authorize]
     public class CustomizeController : Controller
     {
         protected UserManager<AppUser> _userManager { get; set; }

@@ -35,7 +35,7 @@ namespace FXV_App.Controllers
         [Authorize("All")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public async Task<IActionResult> EventInfo(int id)
+        public async Task<IActionResult> Index(int id)
         {
             if (id == 0)
             {
@@ -174,12 +174,12 @@ namespace FXV_App.Controllers
                             long fileSize = img.Length;
                             var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                             string webRootPath = _hostingEnvironment.WebRootPath;
-                            var filePath = webRootPath + "./sources/eventImg/" + newFileName;
+                            var filePath = webRootPath + "/sources/eventImg/" + newFileName;
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
                                 await img.CopyToAsync(stream);
                             }
-                            New_Img_Path = "./sources/eventImg/" + newFileName;
+                            New_Img_Path = "/sources/eventImg/" + newFileName;
                         }
                     }
 

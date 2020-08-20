@@ -34,7 +34,7 @@ namespace FXV_App.Controllers
         [Authorize("All_NoAthlete")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult Organizations()
+        public IActionResult Index()
         {
             return View();
         }
@@ -89,13 +89,13 @@ namespace FXV_App.Controllers
                                 long fileSize = img.Length;
                                 var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                                 string webRootPath = _hostingEnvironment.WebRootPath;
-                                var filePath = webRootPath + "./sources/orgImg/" + newFileName;
+                                var filePath = webRootPath + "/sources/orgImg/" + newFileName;
                                 using (var stream = new FileStream(filePath, FileMode.Create))
                                 {
                                     await img.CopyToAsync(stream);
                                 }
 
-                                Img_Path = "./sources/orgImg/" + newFileName;
+                                Img_Path = "/sources/orgImg/" + newFileName;
                             }
                         }
                         else if (organizationBuilder.Image == null)
@@ -135,7 +135,7 @@ namespace FXV_App.Controllers
                         }
 
                         transaction.Commit();
-                        return RedirectToAction("Organizations", "Organizations");
+                        return RedirectToAction("Index", "Organizations");
 
                     }
                     catch (Exception e)

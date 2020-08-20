@@ -1,0 +1,85 @@
+﻿
+.option-btn {
+    border: 1px solid #FFDD00 !important;
+    background: none !important;
+    color: white;
+}
+
+.option-male-btn {
+    border: 1px solid #FFDD00 !important;
+    background: none !important;
+    color: #468eeb !important;
+}
+
+.option-btn-active {
+    border: 1px solid #FFDD00 !important;
+    background: #FFDD00 !important;
+    color: black !important;
+}
+
+.option-female-btn {
+    border: 1px solid #FFDD00 !important;
+    background: none !important;
+    color: #ec78f0 !important;
+}
+
+.option-male-btn:hover, .option-btn:hover {
+    border: 1px solid #FFDD00 !important;
+    -webkit-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Firefox 3.5 - 3.6 */
+    box-shadow: 0px 0px 5px 1px #ffdd00 !important;
+}
+
+.option-female-btn:hover {
+    border: 1px solid #FFDD00 !important;
+    -webkit-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow: 0px 0px 5px 1px #ffdd00 !important; /* Firefox 3.5 - 3.6 */
+    box-shadow: 0px 0px 5px 1px #ffdd00 !important;
+}
+
+.option-male-btn-active {
+    border: 1px solid #468eeb !important;
+    background: #468eeb !important;
+    color: black !important;
+}
+
+.option-female-btn-active {
+    border: 1px solid #ec78f0 !important;
+    background: #ec78f0 !important;
+    color: black !important;
+}
+
+.display-inline-flex {
+    display: inline-flex;
+}
+
+.run-button {
+    border-top-right-radius: 15px !important;
+    border-top-left-radius: 15px !important;
+    transform: rotate(90deg) translate(0, -28px) !important;
+    height: 40px !important;
+    margin: auto !important;
+    margin-left: -51px !important;
+    background-color: rgba(29, 181, 80,0.7) !important;
+    border: 1px #212121 solid !important;
+    color: white !important;
+}
+
+    .run-button:hover, .run-button-running:hover {
+        border: 1px solid #FFDD00 !important;
+        background-color: rgba(255, 221, 0, 0.9) !important;
+        color: black !important;
+    }
+.run-button-running {
+    border-top-right-radius: 15px !important;
+    border-top-left-radius: 15px !important;
+    transform: rotate(90deg) translate(0, -30px) !important;
+    height: 40px !important;
+    margin: auto !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    margin-left: -55px !important;
+    background-color: rgba(240, 154, 17,0.7) !important;
+    border: 1px #212121 solid !important;
+    color: white !important;
+}

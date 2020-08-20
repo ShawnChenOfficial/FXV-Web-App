@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
+@{ Layout = "_Layout"; }
 <!--Tests-->
 <div id="deleteConfirmPopUp" v-bind:class="{modal: true, 'display-block': Show}">
     <!-- Modal content -->
@@ -20,18 +21,25 @@
                 <div class="mt-1">
                     <input v-on:keyup="Search()" v-model="SearchText" placeholder="Search Name..." />
                 </div>
+                <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                <div class="pr-2" v-on:click="GetOnlyMale">
+                    <a :class="{'btn p-1 pl-3 pr-3':true, 'option-male-btn-active': isMale && searchByGender, 'option-male-btn': !searchByGender}"><strong>M</strong></a>
+                </div>
+                <div v-on:click="GetOnlyFemale">
+                    <a :class="{'btn p-1 pl-3 pr-3':true,  'option-female-btn-active': !isMale && searchByGender, 'option-female-btn': !searchByGender}"><strong>F</strong></a>
+                </div>
                 @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
                 {
-                    <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
-                    <div>
-                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddTest()">Add</a>
-                    </div>
-                }
+            <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
+                            <div>
+                                <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create">Add</a>
+                            </div>}
             </div>
             <div class="mt-4 list" id="list">
                 <div is='test-list-item' v-for='(list,index) in lists' v-bind:key='list.id' v-bind:name="list.name" v-bind:description="list.description"
                      v-bind:tested="list.tested" v-bind:cate_abbri="list.cate_abbri" v-bind:gender="list.gender" v-bind:test_Id="list.test_id"
-                     v-bind:img_path="list.img_path" v-bind:arrow_down="list.arrow_down" v-bind:details="list.details" v-bind:arrow_up="list.arrow_up"
+                     v-bind:arrow_down="list.arrow_down" v-bind:details="list.details" v-bind:arrow_up="list.arrow_up"
+                     v-bind:hasrunningactivity="list.hasrunningactivity"
                      v-bind:detail_hide="list.detail_hide" v-on:get_detail="GetDetail(list.test_id,list, $event)"></div>
                 <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="LoadMore($event)">More</p>
             </div>

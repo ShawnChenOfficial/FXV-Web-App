@@ -346,21 +346,19 @@ namespace FXV_App.Controllers
         //
         //Get all test(s) list
         //
-        [HttpGet("{num}/{last_id}")]
-        public async Task<IActionResult> GetTestList(int num, int last_id)
+        [HttpGet("{last_id}")]
+        public async Task<IActionResult> GetTestList(int last_id)
         {
             var testList = new List<ViewModel_Test>();
 
-            if (num == 0)
-            {
-                testList = await _dbContext.Test.OrderBy(o => o.Name).Include(inc => inc.Test_Category.Category).Select(t => new ViewModel_Test
+            testList = await _dbContext.Test.Where(w => w.Test_ID > last_id).OrderBy(o => o.Test_ID)
+                .Include(inc => inc.Test_Category.Category).OrderBy(o => o.Name).Select(t => new ViewModel_Test
                 {
                     TestId = t.Test_ID,
                     Name = t.Name,
                     Gender = t.Gender,
                     Description = t.Description,
-                    Img_Path = t.Img_Path,
-                    Visible = t.Visible,
+                    Public = t.Public,
                     Reverse = t.Reverse,
                     Unit = t.Unit,
                     LowerResult = t.LowerResult,
@@ -368,30 +366,11 @@ namespace FXV_App.Controllers
                     LowerScore = t.LowerScore,
                     HigherScore = t.HigherScore,
                     Category = t.Test_Category.Category,
-                    Tested = _dbContext.Test_Result.Where(x => x.Test_ID == t.Test_ID).Count()
+                    Tested = _dbContext.Test_Result.Where(x => x.Test_ID == t.Test_ID).Count(),
+                    Status = Status.HasNoRunningActivity,
+                    IsSplittable = t.IsSplittable,
+                    UsedAsSplit = t.UsedAsSplit
                 }).ToListAsync();
-            }
-            else
-            {
-                testList = await _dbContext.Test.Where(w => w.Test_ID > last_id).OrderBy(o => o.Test_ID)
-                    .Include(inc => inc.Test_Category.Category).Take(num).Select(t => new ViewModel_Test
-                    {
-                        TestId = t.Test_ID,
-                        Name = t.Name,
-                        Gender = t.Gender,
-                        Description = t.Description,
-                        Img_Path = t.Img_Path,
-                        Visible = t.Visible,
-                        Reverse = t.Reverse,
-                        Unit = t.Unit,
-                        LowerResult = t.LowerResult,
-                        HigherResult = t.HigherResult,
-                        LowerScore = t.LowerScore,
-                        HigherScore = t.HigherScore,
-                        Category = t.Test_Category.Category,
-                        Tested = _dbContext.Test_Result.Where(x => x.Test_ID == t.Test_ID).Count()
-                    }).ToListAsync();
-            }
 
             return new JsonResult(JsonConvert.SerializeObject(testList));
         }
@@ -428,7 +407,7 @@ namespace FXV_App.Controllers
                     AthleteName = (detail.Count > 0) ? detail[0].AppUser.FirstName + " " + detail[0].AppUser.LastName : "Unknown",
                     Age = (detail.Count > 0) ? GetAge(detail[0].AppUser.DOB) : 0,
                     Gender = (detail.Count > 0) ? detail[0].AppUser.Gender : "Unknown",
-                    ImgPath = (detail.Count > 0) ? detail[0].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (detail.Count > 0) ? detail[0].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (detail.Count > 0) ? detail[0].Point : 0,
                     Result = (detail.Count > 0) ? detail[0].Result : 0
                 },
@@ -437,7 +416,7 @@ namespace FXV_App.Controllers
                     AthleteName = (detail.Count > 1) ? detail[1].AppUser.FirstName + " " + detail[0].AppUser.LastName : "Unknown",
                     Age = (detail.Count > 1) ? GetAge(detail[1].AppUser.DOB) : 0,
                     Gender = (detail.Count > 1) ? detail[1].AppUser.Gender : "Unknown",
-                    ImgPath = (detail.Count > 1) ? detail[1].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (detail.Count > 1) ? detail[1].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (detail.Count > 1) ? detail[1].Point : 0,
                     Result = (detail.Count > 1) ? detail[1].Result : 0
                 },
@@ -446,7 +425,7 @@ namespace FXV_App.Controllers
                     AthleteName = (detail.Count > 2) ? detail[2].AppUser.FirstName + " " + detail[0].AppUser.LastName : "Unknown",
                     Age = (detail.Count > 2) ? GetAge(detail[2].AppUser.DOB) : 0,
                     Gender = (detail.Count > 2) ? detail[2].AppUser.Gender : "Unknown",
-                    ImgPath = (detail.Count > 2) ? detail[2].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (detail.Count > 2) ? detail[2].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (detail.Count > 2) ? detail[2].Point : 0,
                     Result = (detail.Count > 2) ? detail[2].Result : 0
                 }
@@ -467,8 +446,7 @@ namespace FXV_App.Controllers
                     Name = t.Name,
                     Gender = t.Gender,
                     Description = t.Description,
-                    Img_Path = t.Img_Path,
-                    Visible = t.Visible,
+                    Public = t.Public,
                     Reverse = t.Reverse,
                     Unit = t.Unit,
                     LowerResult = t.LowerResult,
@@ -476,12 +454,43 @@ namespace FXV_App.Controllers
                     LowerScore = t.LowerScore,
                     HigherScore = t.HigherScore,
                     Category = t.Test_Category.Category,
-                    Tested = _dbContext.Test_Result.Where(x => x.Test_ID == t.Test_ID).Count()
+                    Tested = _dbContext.Test_Result.Where(x => x.Test_ID == t.Test_ID).Count(),
+                    Status = Status.HasNoRunningActivity,
+                    IsSplittable = t.IsSplittable,
+                    UsedAsSplit = t.UsedAsSplit
                 }).ToListAsync();
 
             return new JsonResult(JsonConvert.SerializeObject(testList));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="testName">The test name user trying to search</param>
+        /// <param name="testid">The test id which user is trying to use as the base test for test activity, this param is used to search if any tests can be used as a split for this test in a test activity</param>
+        /// <returns></returns>
+        [HttpGet("{testName}/{testid}")]
+        public async Task<IActionResult> GetSplitTestsByName(string testName, int testid)
+        {
+            var categoryid_gender = await _dbContext.Test.Where(w => w.Test_ID == testid).Select(s => new
+            {
+                CategoryId = s.TC_id,
+                Gender = s.Gender
+            }).FirstOrDefaultAsync();
+
+            var testList = await _dbContext.Test.Where(w => w.TC_id == categoryid_gender.CategoryId
+            && w.Gender == categoryid_gender.Gender
+            && w.UsedAsSplit == true && ((testName != "") ? w.Name.ToLower().Contains(testName.ToLower()) : true))
+                .OrderBy(o => o.Name)
+                .Include(inc => inc.Test_Category.Category)
+                .Select(t => new ViewModel_Test
+                {
+                    TestId = t.Test_ID,
+                    Name = t.Name
+                }).ToListAsync();
+
+            return new JsonResult(JsonConvert.SerializeObject(testList));
+        }
         //Get all combines list
         [HttpGet("{num}/{last_id}")]
         public async Task<IActionResult> GetCombineList(int num, int last_id)
@@ -541,13 +550,14 @@ namespace FXV_App.Controllers
             var result = new ViewModel_CombineDetail
             {
                 Sys_Permission = _claim.Role,
+                CombineId = combine.C_ID,
                 TestNames = await _dbContext.Combine_Builder.Where(w => w.C_ID == combine_id).Include(inc => inc.Test).OrderBy(o => o.Test.Name).Select(s => s.Test.Name).ToListAsync(),
                 Top = new Top
                 {
                     AthleteName = (rank.Count > 0) ? rank[0].AppUser.FirstName + " " + rank[0].AppUser.LastName : "Unknown",
                     Age = (rank.Count > 0) ? GetAge(rank[0].AppUser.DOB) : 0,
                     Gender = (rank.Count > 0) ? rank[0].AppUser.Gender : "Unknown",
-                    ImgPath = (rank.Count > 0) ? rank[0].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (rank.Count > 0) ? rank[0].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (rank.Count > 0) ? rank[0].Point : 0,
                 },
                 Promiex = new Promiex
@@ -555,7 +565,7 @@ namespace FXV_App.Controllers
                     AthleteName = (rank.Count > 1) ? rank[1].AppUser.FirstName + " " + rank[0].AppUser.LastName : "Unknown",
                     Age = (rank.Count > 1) ? GetAge(rank[1].AppUser.DOB) : 0,
                     Gender = (rank.Count > 1) ? rank[1].AppUser.Gender : "Unknown",
-                    ImgPath = (rank.Count > 1) ? rank[1].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (rank.Count > 1) ? rank[1].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (rank.Count > 1) ? rank[1].Point : 0
                 },
                 Bronze = new Bronze
@@ -563,7 +573,7 @@ namespace FXV_App.Controllers
                     AthleteName = (rank.Count > 2) ? rank[2].AppUser.FirstName + " " + rank[0].AppUser.LastName : "Unknown",
                     Age = (rank.Count > 2) ? GetAge(rank[2].AppUser.DOB) : 0,
                     Gender = (rank.Count > 2) ? rank[2].AppUser.Gender : "Unknown",
-                    ImgPath = (rank.Count > 2) ? rank[2].AppUser.Profile_Img_Path : "./sources/userProfileImg/user-profile-null.png",
+                    ImgPath = (rank.Count > 2) ? rank[2].AppUser.Profile_Img_Path : "/sources/userProfileImg/user-profile-null.png",
                     Score = (rank.Count > 2) ? rank[2].Point : 0
                 }
             };
@@ -615,7 +625,7 @@ namespace FXV_App.Controllers
             }
             else
             {
-                eventList = await _dbContext.Event.Where(w => w.E_ID > last_id).OrderBy(o => o.E_ID).Take(num).Include(inc=>inc.Event_Status)
+                eventList = await _dbContext.Event.Where(w => w.E_ID > last_id).OrderBy(o => o.E_ID).Take(num).Include(inc => inc.Event_Status)
                         .Select(s => new ViewModel_Event
                         {
                             EventId = s.E_ID,
@@ -654,7 +664,7 @@ namespace FXV_App.Controllers
         public async Task<IActionResult> GetEventsByName(string event_name)
         {
             var result = await _dbContext.Event
-                        .Where(w => w.Name.ToLower().Contains(event_name.ToLower())).Include(inc=>inc.Event_Status).OrderBy(o => o.E_ID)
+                        .Where(w => w.Name.ToLower().Contains(event_name.ToLower())).Include(inc => inc.Event_Status).OrderBy(o => o.E_ID)
                         .Select(s => new ViewModel_Event
                         {
                             EventId = s.E_ID,
@@ -1082,18 +1092,18 @@ namespace FXV_App.Controllers
         public async Task<IActionResult> GetAthleteOrgsTeams(int user_id)
         {
 
-            var result = await _dbContext.Organization_Relationship.Where(w=>w.Id == user_id)
-                .Include(inc=>inc.Organization).Select(s=>new ViewModel_AthleteOrgsTeams
-            {
+            var result = await _dbContext.Organization_Relationship.Where(w => w.Id == user_id)
+                .Include(inc => inc.Organization).Select(s => new ViewModel_AthleteOrgsTeams
+                {
                     Org_ID = s.Org_ID,
                     Organization = s.Organization.Name
-            }).AsNoTracking().ToListAsync();
+                }).AsNoTracking().ToListAsync();
 
             foreach (var x in result)
             {
                 x.Teams.AddRange(await _dbContext.Team_Membership.Where(w => w.Id == user_id)
                     .Include(inc => inc.Team).Where(w => w.Team.Org_ID == x.Org_ID)
-                    .Select(s=> new ViewModel_Team
+                    .Select(s => new ViewModel_Team
                     {
                         Img_Path = s.Team.Img_Path,
                         Name = s.Team.Name

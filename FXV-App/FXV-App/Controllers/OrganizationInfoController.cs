@@ -36,7 +36,7 @@ namespace FXV_App.Controllers
         [Authorize("All_NoAthlete")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public async Task<IActionResult> OrganizationInfo(int id)
+        public async Task<IActionResult> Index(int id)
         {
             if (id == 0)
             {
@@ -131,12 +131,12 @@ namespace FXV_App.Controllers
                                 long fileSize = img.Length;
                                 var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                                 string webRootPath = _hostingEnvironment.WebRootPath;
-                                var filePath = webRootPath + "./sources/teamImg/" + newFileName;
+                                var filePath = webRootPath + "/sources/teamImg/" + newFileName;
                                 using (var stream = new FileStream(filePath, FileMode.Create))
                                 {
                                     await img.CopyToAsync(stream);
                                 }
-                                Img_Path = "./sources/teamImg/" + newFileName;
+                                Img_Path = "/sources/teamImg/" + newFileName;
                             }
                         }
                         else if (teamBuilder.Image == null)
@@ -257,7 +257,7 @@ namespace FXV_App.Controllers
 
                         transaction.Commit();
 
-                        return RedirectToAction("OrganizationInfo", _org_id);
+                        return RedirectToAction("Index", _org_id);
                     }
                     catch (Exception e)
                     {
@@ -361,12 +361,12 @@ namespace FXV_App.Controllers
                             long fileSize = img.Length;
                             var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                             string webRootPath = _hostingEnvironment.WebRootPath;
-                            var filePath = webRootPath + "./sources/orgImg/" + newFileName;
+                            var filePath = webRootPath + "/sources/orgImg/" + newFileName;
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
                                 await img.CopyToAsync(stream);
                             }
-                            New_Img_Path = "./sources/orgImg/" + newFileName;
+                            New_Img_Path = "/sources/orgImg/" + newFileName;
                         }
                     }
 
@@ -443,7 +443,7 @@ namespace FXV_App.Controllers
 
             if (ReturnResult)
             {
-                return View("Organizations");
+               return RedirectToAction("Index", originalOrg.Org_ID);
             }
             else
             {

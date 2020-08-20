@@ -7,13 +7,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="p-0">
-                    <h2 class="medium-bold text-left text-FXV">Edit Test</h2>
+                    <h2 class="medium-bold text-left text-FXV">Create Test</h2>
                 </div>
                 <form id="CreateTests" class="card-body col-12 row" asp-action="CreateTests" asp-controller="Home" method="post" enctype="multipart/form-data">
                     <div class="col-12 col-lg-7 row">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input asp-for="TestId" hidden />
-                        <input asp-for="RowVersion" hidden readonly value="@Model.RowVersionBase64" />
                         <div class="form-group col-12">
                             <label asp-for="Name" class="control-label text-white"></label>
                             <input asp-for="Name" class="form-control" placeholder="Test Name" />
@@ -138,15 +136,4 @@
         </div>
     </div>
 </div>
-<script>
-    var pageData = new Vue({
-        data() {
-            return {
-                gender: "@Model.Gender",
-                isPublic: @Model.Public.ToString().ToLower(),
-                isReverseOrder: @Model.Reverse.ToString().ToLower()
-            }
-        }
-    });
-</script>
-<script type="text/javascript" src="/sources/js/testEditPageHandler.js"></script>
+<script type="text/javascript" src="/sources/js/testCreatePageHandler.js"></script>

@@ -1,50 +1,55 @@
 ﻿
 Vue.component('event-element', {
     template: '\
-            <div class= "list-item" v-on:click="$emit(\'get_event_info\')">\
-            <div class="row">\
-                <div class="col-lg-2 col-md-3 col-0 list-item-img-block">\
-                    <img v-bind:src="img_path">\
-            </div>\
-                    <div class="col-lg-8 offset-lg-0 col-md-7 offset-md-0 col-sm-8 offset-sm-1 col-12 offset-0 pb-2">\
-                        <h3 class="text-FXV mt-2">{{eventname}}</h3>\
-                        <div class="row text-white">\
-                            <p class="col-12 mb-2">\
-                                <span class="material-icons mr-1" style="float:left;line-height: 19px;font-size: 19px;">\
-                                    location_on\
-                        </span> {{location}}\
-                    </p>\
-                            <p class="col-xl-3 col-lg-4 col-md-6 col-sm-7 col-12">\
-                                <span class="text-muted">\
-                                    Date:\
-                        </span> {{date}}\
-                    </p>\
-                            <p class="col-xl-3 col-lg-4 col-md-6 col-sm-5 col-12">\
-                                <span class="text-muted">\
-                                    Time:\
-                        </span> {{time}}\
-                    </p>\
+            <div class= "list-item" @click="getEventInfo(\'/EventInfo/Index?id=\' + eventid)">\
+                <div class="row">\
+                    <div class="col-lg-2 col-md-3 col-0 list-item-img-block">\
+                        <img v-bind:src="img_path">\
+                </div>\
+                        <div class="col-lg-8 offset-lg-0 col-md-7 offset-md-0 col-sm-8 offset-sm-1 col-12 offset-0 pb-2">\
+                            <h3 class="text-FXV mt-2">{{eventname}}</h3>\
+                            <div class="row text-white">\
+                                <p class="col-12 mb-2">\
+                                    <span class="material-icons mr-1" style="float:left;line-height: 19px;font-size: 19px;">\
+                                        location_on\
+                            </span> {{location}}\
+                        </p>\
+                                <p class="col-xl-3 col-lg-4 col-md-6 col-sm-7 col-12">\
+                                    <span class="text-muted">\
+                                        Date:\
+                            </span> {{date}}\
+                        </p>\
+                                <p class="col-xl-3 col-lg-4 col-md-6 col-sm-5 col-12">\
+                                    <span class="text-muted">\
+                                        Time:\
+                            </span> {{time}}\
+                        </p>\
+                            </div>\
+                        </div>\
+                        <div class="col-md-2 col-sm-3 col-12 text-right medium-bold text-FXV list-item-block-sm-hide">\
+                            <p class="text-muted mt-2"><span class="text-FXV font-x-large medium-bold-400">{{registered_num}}</span> Registered</p>\
+                            <p v-bind:class="{\'font-weight-bold\': true, \'font-x-large\':true, \'text-event-pending\': pending, \'text-event-started\': started, \'text-event-closed\': closed }">{{status}}</p>\
+                        </div>\
+                        <div class="col-12 medium-bold text-FXV list-item-block-sm-show pb-4">\
+                            <p v-bind:class="{\'font-weight-bold\': true, \'font-x-large\':true, \'text-event-pending\': pending, \'text-event-started\': started, \'text-event-closed\': closed }">{{status}}</p>\
                         </div>\
                     </div>\
-                    <div class="col-md-2 col-sm-3 col-12 text-right medium-bold text-FXV list-item-block-sm-hide">\
-                        <p class="text-muted mt-2"><span class="text-FXV font-x-large medium-bold-400">{{registered_num}}</span> Registered</p>\
-                        <p v-bind:class="{\'font-weight-bold\': true, \'font-x-large\':true, \'text-event-pending\': pending, \'text-event-started\': started, \'text-event-closed\': closed }">{{status}}</p>\
+                    <div v-bind:class="{\'list-item-extend\': true, \'list-item-extend-hide\': detail_hide, \'pl-5\':true, \'pr-5\':true}">\
+                        <div class="border-top w-100 pb-2"></div>\
+                        <div is="list-item-extend" v-for="detail in details" v-bind:key="detail.id" v-bind:combinename="detail.combinename" v-bind:tests="detail.tests"></div>\
+                        <p class="loading m-auto text-center text-white pt-3 pointer pb-5" >Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="loading..."/></p>\
                     </div>\
-                    <div class="col-12 medium-bold text-FXV list-item-block-sm-show pb-4">\
-                        <p v-bind:class="{\'font-weight-bold\': true, \'font-x-large\':true, \'text-event-pending\': pending, \'text-event-started\': started, \'text-event-closed\': closed }">{{status}}</p>\
-                    </div>\
-                </div>\
-                <div v-bind:class="{\'list-item-extend\': true, \'list-item-extend-hide\': detail_hide, \'pl-5\':true, \'pr-5\':true}">\
-                    <div class="border-top w-100 pb-2"></div>\
-                    <div is="list-item-extend" v-for="detail in details" v-bind:key="detail.id" v-bind:combinename="detail.combinename" v-bind:tests="detail.tests"></div>\
-                    <p class="loading m-auto text-center text-white pt-3 pointer pb-5" >Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="loading..."/></p>\
-                </div>\
-                <span v-bind:class="{\'material-icons\':true, \'text-white\':true, \'list-item-arrow-down\': arrow_down, \'list-item-arrow-up\':arrow_up}" v-on:click="$emit(\'get_detail\', $event)" v-on:click.stop="">\
-                  keyboard_arrow_down\
-              </span>\
-         </div>\
+                    <span v-bind:class="{\'material-icons\':true, \'text-white\':true, \'list-item-arrow-down\': arrow_down, \'list-item-arrow-up\':arrow_up}" v-on:click="$emit(\'get_detail\', $event)" v-on:click.stop="">\
+                      keyboard_arrow_down\
+                  </span>\
+            </div>\
         ',
-    props: ['img_path', 'eventname', 'location', 'date', 'time', 'status', 'registered_num', 'pending', 'started', 'closed', 'arrow_up', 'arrow_down', 'detail_hide', 'details'],
+    props: ['eventid', 'img_path', 'eventname', 'location', 'date', 'time', 'status', 'registered_num', 'pending', 'started', 'closed', 'arrow_up', 'arrow_down', 'detail_hide', 'details'],
+    methods: {
+        getEventInfo: function (url) {
+            window.location.href = url;
+        }
+    }
 });
 
 var vueEventList = new Vue({
@@ -122,7 +127,6 @@ var vueEventList = new Vue({
             }
         },
         GetDetail: function (e_id, list, event) {
-
             if (list.arrow_down && !list.arrow_up) {
 
                 $.each(vueEventList.lists, function (index, item) {
@@ -164,28 +168,6 @@ var vueEventList = new Vue({
                 list.detail_hide = !list.detail_hide;
                 $(event.target).parent().find('.list-item-extend').find('.loading').removeAttr('hidden', 'hidden');
             }
-        },
-        GetEventInfo: function (e_id) {
-            var params = new URLSearchParams();
-            params.append('id', e_id);
-
-            axios.get(this.url_event_info, {
-                params: params
-            })
-                .then(response => {
-                    var str = response.data.toString();
-                    if (str.indexOf("<!--This is the login layout-->") == 0) {
-                        alert("The system detects that you have not operated for a long time, please login again");
-                        document.clear();
-                        location.reload();
-                    }
-                    else {
-                        $('#body-content').html(response.data);
-                    }
-                })
-                .catch(error => {
-                    $("#body-content").html(error.response);
-                });
         }
     }
 });
@@ -224,7 +206,6 @@ var vueEventMenu = new Vue({
     },
     mounted() {
         var date = new Date();
-
         this.endDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD');
         date.setMonth(date.getMonth() - 1);
         this.startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD');
@@ -235,23 +216,6 @@ var vueEventMenu = new Vue({
     methods: {
         CheckSearchText: function () {
             this.SearchText = this.SearchText.toString().replace(/[\\/<>'"]/g, '');
-        },
-        AddEvent: function () {
-            axios.get(this.url_Add)
-                .then(response => {
-                    var str = response.data.toString();
-                    if (str.indexOf("<!--This is the login layout-->") == 0) {
-                        alert("The system detects that you have not operated for a long time, please login again");
-                        document.clear();
-                        location.reload();
-                    }
-                    else {
-                        $('#body-content').html(response.data);
-                    }
-                })
-                .catch(error => {
-                    $("#body-content").html(error.response);
-                });
         },
         Search: _.debounce(
             function () {

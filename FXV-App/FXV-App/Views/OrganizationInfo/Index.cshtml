@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @{
+    Layout = "_Layout";
 }
 <!--OrganizationInfo-->
 <div id="deleteConfirmPopUp" v-bind:class="{modal: true, 'display-block': Show}">
@@ -23,7 +24,7 @@
                 <h2 class="text-FXV font-weight-bold">@Model.Name</h2>
                 <div class="mt-3">
                     <div class="col-12 text-left text-white">
-                        <a v-on:click="EditOrg()" class="pointer">
+                        <a asp-action="Edit" asp-route-org_id="@Model.OrgId" class="pointer">
                             <span class="material-icons pr-1">
                                 create
                             </span>Edit
@@ -72,14 +73,14 @@
                 {
                     <span class="text-muted font-2rem ml-2 mr-2 menu-divider-vertical">|</span>
                     <div>
-                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddTeam">Add</a>
+                        <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create" asp-route-org_id="@Model.OrgId">Add</a>
                     </div>
                 }
             </div>
             <div class="mt-4 list" id="teams-list">
                 <div is="team-list-item" v-for="list in lists" v-bind:key="list.id" v-bind:team_id="list.team_id"
                      v-bind:img_path="list.img_path" v-bind:name="list.name" v-bind:location="list.location"
-                     v-bind:manager="list.manager" v-bind:num_members="list.num_members" v-on:to_team_page="ToTeamPage(list.team_id)"></div>
+                     v-bind:manager="list.manager" v-bind:num_members="list.num_members"></div>
                 <p id="more" class="m-auto text-center text-white pt-3"></p>
             </div>
         </div>

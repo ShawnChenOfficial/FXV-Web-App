@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @{
+    Layout = "_Layout";
 }
 <!--Events-->
 <style>
@@ -136,7 +137,7 @@
             {
                 <span class="text-muted font-2rem ml-2 mr-3 menu-divider-vertical">|</span>
                 <div>
-                    <a class="btn btn-secondary pt-1 pb-1 text-capitalize" v-on:click="AddEvent()">Add</a>
+                    <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create">Add</a>
                 </div>
             }
         </div>
@@ -144,8 +145,8 @@
             <div is="event-element" v-for='list in lists' v-bind:key='list.id' v-bind:eventname="list.eventname" v-bind:location="list.location"
                  v-bind:img_path="list.img_path" v-bind:date="list.date" v-bind:time="list.time" v-bind:status="list.status"
                  v-bind:registered_num="list.registered_num" v-bind:pending="list.pending"
-                 v-bind:started="list.started" v-bind:closed="list.closed" v-bind:details="list.details"
-                 v-bind:arrow_down="list.arrow_down" v-bind:arrow_up="list.arrow_up" v-bind:detail_hide="list.detail_hide" v-on:get_detail="GetDetail(list.eventid,list, $event)" v-on:get_event_info="GetEventInfo(list.eventid)"></div>
+                 v-bind:started="list.started" v-bind:closed="list.closed" v-bind:details="list.details" v-bind:eventid="list.eventid"
+                 v-bind:arrow_down="list.arrow_down" v-bind:arrow_up="list.arrow_up" v-bind:detail_hide="list.detail_hide" v-on:get_detail="GetDetail(list.eventid,list, $event)"></div>
             <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="hasMore && LoadMore()">More</p>
         </div>
     </div>

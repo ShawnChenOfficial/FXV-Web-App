@@ -91,6 +91,11 @@ namespace FXV.Controllers
                     TempData["ErrorMsg"] = "Sorry, we cannot send a password reset link with multi-account email, please contact our admin.";
                     return View("ResetPwd", resetPwd);
                 }
+                else if (applicationDbContext.UserTokens.Where(w=>w.UserId == list_user.FirstOrDefault().Id).Count() == 0)
+                {
+                    TempData["ErrorMsg"] = "You have requested a password reset link, please go to your email and follow the instruction.";
+                    return View("ResetPwd", resetPwd);
+                }
                 else
                 {
                     var user = list_user[0];

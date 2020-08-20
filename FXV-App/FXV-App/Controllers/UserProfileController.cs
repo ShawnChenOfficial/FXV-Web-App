@@ -186,12 +186,12 @@ namespace FXV_App.Controllers
                                     long fileSize = img.Length;
                                     var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                                     string webRootPath = _hostingEnvironment.WebRootPath;
-                                    var filePath = webRootPath + "./sources/userProfileImg/" + newFileName;
+                                    var filePath = webRootPath + "/sources/userProfileImg/" + newFileName;
                                     using (var stream = new FileStream(filePath, FileMode.Create))
                                     {
                                         await img.CopyToAsync(stream);
                                     }
-                                    New_Img_Path = "./sources/userProfileImg/" + newFileName;
+                                    New_Img_Path = "/sources/userProfileImg/" + newFileName;
                                 }
                             }
 

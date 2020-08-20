@@ -25,7 +25,7 @@ var deleteTeamPopUp = new Vue({
                 else {
                     if (response.data.Success) {
                         DeleteResult = true;
-                        this.RedirectToOrgInfo();
+                        window.location.href = "/Organizations/Index?id=" + team_menu.org_id;
                         SuccessTurnToParentPage("Success", true);
                     }
                     else {
@@ -41,32 +41,6 @@ var deleteTeamPopUp = new Vue({
         },
         DeleteCancelled: function () {
             deleteTeamPopUp.Deleting = false;
-        },
-        RedirectToOrgInfo: function () {
-            if (DeleteResult) {
-
-                var params = new URLSearchParams();
-                params.append('id', team_menu.org_id);
-
-                axios.get('/OrganizationInfo/OrganizationInfo', {
-                    params: params
-                }).then(response => {
-                        var str = response.data.toString();
-                        if (str.indexOf("<!--This is the login layout-->") == 0) {
-                            alert("The system detects that you have not operated for a long time, please login again");
-                            document.clear();
-                            location.reload();
-                        }
-                        else {
-                            $("#body-content").html(response.data);
-                        }
-                    })
-                    .catch(error => {
-                        $("#body-content").html(error.response);
-                    });
-
-                DeleteResult = false;
-            }
         },
     },
     computed: {
@@ -94,35 +68,6 @@ var team_menu = new Vue({
     methods: {
         DeleteTeam: function () {
             deleteTeamPopUp.Deleting = true;
-        },
-        EditTeam: function () {
-            $('#loading-panel').removeAttr('hidden');
-
-            var params = new URLSearchParams();
-            params.append('team_id', this.team_id);
-
-            axios.get(this.url_team_edit, {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    if (response.data.Result != undefined && !response.data.Result && response.data.Reason != undefined) {
-                        SuccessTurnToParentPage(response.data.Reason, false);
-                    }
-                    else {
-                        $("#body-content").html(response.data);
-                    }
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            });
-
-            $('#loading-panel').attr('hidden', 'hidden');
         },
     },
 });
@@ -172,12 +117,12 @@ var vueMembersMenu = new Vue({
         Search: _.debounce(
             function () {
                 $('#members-list').find('#more').html('Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt=""/>');
-                vueMembersList.lists = [];
+                vueTeamMembersList.lists = [];
 
                 if ($('#members-menu input').val() == "") {
-                    vueMembersList.last_id = 0;
-                    vueMembersList.hasMore = true;
-                    vueMembersList.LoadMore();
+                    vueTeamMembersList.last_id = 0;
+                    vueTeamMembersList.hasMore = true;
+                    vueTeamMembersList.LoadMore();
                 }
                 else {
                     this.SendSearchRequest();
@@ -196,7 +141,7 @@ var vueMembersMenu = new Vue({
                         try {
                             var json = JSON.parse(response.data);
                             $.each(json, function (index, item) {
-                                vueMembersList.lists.push({
+                                vueTeamMembersList.lists.push({
                                     id: vueTeamsList.nextTodoId++,
                                     uid: item.UId,
                                     img_path: item.Img_Path,
@@ -256,7 +201,7 @@ var vueMembersMenu = new Vue({
 });
 
 
-var vueMembersList = new Vue({
+var vueTeamMembersList = new Vue({
     el: "#members-list",
     data: {
         last_id: 0,
@@ -289,9 +234,10 @@ var vueMembersList = new Vue({
                         else {
                             try {
                                 var json = JSON.parse(response.data);
+
                                 $.each(json, function (index, item) {
-                                    vueMembersList.lists.push({
-                                        id: vueTeamsList.nextTodoId++,
+                                    vueTeamMembersList.lists.push({
+                                        id: vueTeamMembersList.nextTodoId++,
                                         uid: item.UId,
                                         img_path: item.Img_Path,
                                         name: item.Name,
@@ -301,16 +247,16 @@ var vueMembersList = new Vue({
                                         location: item.Location
                                     });
 
-                                    vueMembersList.last_id = (item.List_Id > vueMembersList.last_id) ? item.List_Id : vueMembersList.last_id;
+                                    vueTeamMembersList.last_id = (item.List_Id > vueTeamMembersList.last_id) ? item.List_Id : vueTeamMembersList.last_id;
                                 });
 
                                 if (json.length < 10) {
                                     $('#members-list').find('#more').attr('disabled', 'true').removeClass('text-white').addClass('text-muted').html("No more");
-                                    vueMembersList.hasMore = false;
+                                    vueTeamMembersList.hasMore = false;
                                 }
                                 else {
                                     $('#members-list').find('#more').removeAttr('disabled').removeClass('text-muted').addClass('text-white').html("More...");
-                                    vueMembersList.hasMore = true;
+                                    vueTeamMembersList.hasMore = true;
                                 }
                             }
                             catch (e) {
@@ -326,33 +272,7 @@ var vueMembersList = new Vue({
         ToProfile: function (user_id) {
             $('#loading-panel').removeAttr('hidden');
 
-            var params = new URLSearchParams();
-            params.append('user_id', user_id);
-            params.append('team_id', team_menu.team_id);
-
-            axios.get(this.url_profile, {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    try {
-                        var json = JSON.parse(response.data);
-                        if (!json.Result) {
-                            alert(json.Reason);
-                        }
-                    }
-                    catch (e) {
-                        $("#body-content").html(response.data);
-                    }
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
+            window.location.href = this.url_profile + "?user_id=" + user_id;
 
             $('#loading-panel').attr('hidden', 'hidden');
         }

@@ -20,22 +20,13 @@ namespace FXV.Models
         public string Description { get; set; }
 
         [ConcurrencyCheck]
-        public string Img_Path { get; set; }
-
-        [ConcurrencyCheck]
-        public string Measurement_Type { get; set; }
-
-        [ConcurrencyCheck]
-        public bool Visible { get; set; }
-
-        [ConcurrencyCheck]
-        public int Value { get; set; }
+        public bool Public { get; set; }
 
         [ConcurrencyCheck]
         public bool Reverse { get; set; }
 
         [ConcurrencyCheck]
-        public string Unit { get; set; } //??
+        public string Unit { get; set; }
 
         [ConcurrencyCheck]
         public double LowerResult { get; set; }
@@ -53,11 +44,17 @@ namespace FXV.Models
         public int TC_id { get; set; }
 
         //2 attribute just remain, until next upgrade.
-        [ConcurrencyCheck]
-        public double LowerCalc { get; set; }
+        //[ConcurrencyCheck]
+        //public double LowerCalc { get; set; }
 
-        [ConcurrencyCheck]
-        public double HigherCalc { get; set; }
+        //[ConcurrencyCheck]
+        //public double HigherCalc { get; set; }
+
+        
+        public bool IsVerified { get; set; }
+
+        public bool IsSplittable { get; set; }
+        public bool UsedAsSplit { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }

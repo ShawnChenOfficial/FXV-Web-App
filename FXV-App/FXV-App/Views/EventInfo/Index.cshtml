@@ -4,6 +4,7 @@
 @inject IAuthorizationService AuthorizationService
 
 @{
+    Layout = "_Layout";
     var combine = @ViewData["Combine"] as Combine;
     var now = DateTime.Now;
     var NotPastEvent = (DateTime.Compare(Model.Date.Date, now.Date) > 0) ? true : ((DateTime.Compare(Model.Date.Date, now.Date) == 0) ? ((TimeSpan.Compare(Model.Time.TimeOfDay, now.TimeOfDay) > 0) ? true : false) : false);

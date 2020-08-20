@@ -122,8 +122,8 @@ var org_menu = new Vue({
 
 Vue.component('team-list-item', {
     template: '\
-    <div class="list-item">\
-        <div class="row pointer" v-on:click="$emit(\'to_team_page\')">\
+    <div class="list-item" @click="getTeamInfo(team_id)">\
+        <div class="row pointer">\
             <div class="col-lg-2 col-md-3 col-sm-2 list-item-img-block">\
                 <img v-bind:src="img_path" />\
             </div>\
@@ -151,6 +151,13 @@ Vue.component('team-list-item', {
     </div>\
       ',
     props: ['team_id', 'img_path', 'name', 'location', 'manager', 'num_members'],
+    methods: {
+        getTeamInfo: function (team_id) {
+            $('#loading-panel').removeAttr('hidden');
+            window.location.href = "/OrganizationTeamInfo/Index?id=" + team_id;
+            $('#loading-panel').attr('hidden', 'hidden');
+        }
+    }
 });
 var vueTeamsMenu = new Vue({
     el: "#teams-menu",
@@ -216,29 +223,6 @@ var vueTeamsMenu = new Vue({
                     $("#body-content").html(error.response);
                 });
         },
-        AddTeam: function () {
-            $('#loading-panel').removeAttr('hidden');
-
-            var params = new URLSearchParams();
-            params.append('org_id', org_menu.org_id);
-
-            axios.get(this.url_AddTeam, {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    $('#body-content').html(response.data);
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
-            $('#loading-panel').attr('hidden', 'hidden');
-        },
     }
 });
 
@@ -298,29 +282,6 @@ var vueTeamsList = new Vue({
                 .catch(error => {
                     $("#body-content").html(error.response);
                 });
-        },
-        ToTeamPage: function (team_id) {
-            $('#loading-panel').removeAttr('hidden');
-
-            var params = new URLSearchParams();
-            params.append('id', team_id);
-
-            axios.get(this.url_TeamInfo, {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    $('#body-content').html(response.data);
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
-            $('#loading-panel').attr('hidden', 'hidden');
         },
     },
 });
@@ -491,33 +452,7 @@ var vueMembersList = new Vue({
         ToProfile: function (user_id) {
             $('#loading-panel').removeAttr('hidden');
 
-            var params = new URLSearchParams();
-            params.append('user_id', user_id);
-            params.append('org_id', org_menu.org_id);
-
-            axios.get(this.url_profile, {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    try {
-                        var json = JSON.parse(response.data);
-                        if (!json.Result) {
-                            alert(json.Reason);
-                        }
-                    }
-                    catch (e) {
-                        $("#body-content").html(response.data);
-                    }
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
+            window.location.href = "/UserProfile/Index?user_id=" + user_id; 
 
             $('#loading-panel').attr('hidden', 'hidden');
         }

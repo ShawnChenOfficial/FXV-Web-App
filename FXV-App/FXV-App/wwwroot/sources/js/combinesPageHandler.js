@@ -71,9 +71,9 @@ Vue.component('combine-list-item', {
               <div v-bind:class="{\'list-item-extend\': true, \'list-item-extend-hide\': detail_hide, \'pl-5\':true, \'pr-5\':true}">\
                   <div is="combine-list-item-extend" v-for="detail in details" v-bind:key="detail.id" v-bind:tests="detail.tests" v-bind:sys_per="detail.sys_per" v-bind:combine_id="detail.combine_id" v-bind:cate_full="detail.cate_full" v-bind:promiex_score="detail.promiex_score"\
                   v-bind:promiex_profile_img="detail.promiex_profile_img" v-bind:promiex_name="detail.promiex_name" v-bind:promiex_gender="detail.promiex_gender" v-bind:promiex_age="detail.promiex_age"\
-                  v-bind:top_score="detail.top_score" v-bind:top_profile_img="detail.top_profile_img" v-bind:top_name="detail.top_name" v-bind:top_gender="detail.top_gender" v-bind:top_age="detail.top_age"\
+                  v-bind:top_score="detail.top_score" v-bind:top_profile_img="detail.top_profile_img" v-bind:combineid="detail.combineid" v-bind:top_name="detail.top_name" v-bind:top_gender="detail.top_gender" v-bind:top_age="detail.top_age"\
                   v-bind:bronze_score="detail.bronze_score" v-bind:bronze_profile_img="detail.bronze_profile_img" v-bind:bronze_name="detail.bronze_name" v-bind:bronze_gender="detail.bronze_gender" v-bind:bronze_age="detail.bronze_age"\
-                  v-on:edit_combine="EditCombine(combine_id, $event)" v-on:delete_combine="DeleteCombine(combine_id, $event)" ></div>\
+                   v-on:delete_combine="DeleteCombine(combine_id, $event)" ></div>\
                   <p class="loading m-auto text-center text-white pt-3 pointer pb-5" >Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt="" /></p>\
               </div>\
             <span v-bind:class="{\'material-icons\':true, \'text-white\':true, \'list-item-arrow-down\': arrow_down, \'list-item-arrow-up\':arrow_up}" v-on:click="$emit(\'get_detail\', $event)">\
@@ -83,38 +83,6 @@ Vue.component('combine-list-item', {
       ',
     props: ['combine_id', 'img_path', 'name', 'description', 'gender', 'tested', 'arrow_down', 'arrow_up', 'detail_hide', 'details'],
     methods: {
-        EditCombine: function (combine_id, event) {
-            $('#loading-panel').removeAttr('hidden');
-
-            var params = new URLSearchParams();
-            params.append('c_id', combine_id);
-
-            axios.get('/Combines/Edit', {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    try {
-                        var json = JSON.parse(response.data);
-                        if (!json.Result) {
-                            alert(json.Reason);
-                        }
-                    }
-                    catch (e) {
-                        $("#body-content").html(response.data);
-                    }
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
-
-            $('#loading-panel').attr('hidden', 'hidden');
-        },
         DeleteCombine: function (combine_id, event) {
             deleteCombinePopUp.Deleting = true;
             deleteCombinePopUp.Combine_Id = combine_id;
@@ -129,7 +97,7 @@ Vue.component('combine-list-item-extend', {
         <div class="row">\
         <div class="border-top w-100 pb-2"></div>\
             <div v-if="sys_per === \'Admin\'" class="col-12 offset-0 col-md-5 offset-md-7 col-lg-3 offset-lg-9 pb-2 col-xl-2 offset-xl-10 text-center text-white p-0">\
-                <a v-on:click="$emit(\'edit_combine\', $event)" class="pointer">\
+                <a v-bind:href="\'/Combines/Edit?c_id=\' + combineid" class="pointer">\
                     <span class="material-icons pr-1">\
                         create\
                     </span>Edit\
@@ -166,7 +134,7 @@ Vue.component('combine-list-item-extend', {
                 </div>\
                 <div class="col-4 p-0">\
                     <div class="topAthlete pl-3 pr-3 text-FXV">\
-                        <h3 class="font-weight-bold mt-1">Top</h3>\
+                        <h3 class="font-weight-bold mt-2">FXV Record</h3>\
                         <h3 class="medium-bold topAthlete-score mt-1">{{top_score}}</h3>\
                         <div class="topAthlete-profile-img" :style="{ backgroundImage: `url(${top_profile_img})` }"></div>\
                         <h4>{{top_name}}</h4>\
@@ -190,12 +158,16 @@ Vue.component('combine-list-item-extend', {
                 </div>\
             </div>\
         </div>\
-        <div class="col-12 text-center pb-2 text-muted col-md-hide">\
+        <div class="col-12 text-center pointer pb-5 col-md-show">\
+        <a class= "text-FXV" href="/Leaderboards/Leaderboards">Click for more information</a>\
+        </div>\
+        <div class="col-12 text-center pb-5 text-muted col-md-hide">\
             <p>Further information is only available for the larger screen size.</p>\
         </div>\
     </div>\
         ',
     props: [
+        'combineid',
         'sys_per',
         'tests',
         'promiex_score',
@@ -228,23 +200,6 @@ var vueCombineMenu = new Vue({
         CheckSearchText: function () {
             this.SearchText = this.SearchText.toString().replace(/[\\/<>'"]/g, '');
         },
-        AddCombine: function () {
-            axios.get(this.url_Add)
-                .then(response => {
-                    var str = response.data.toString();
-                    if (str.indexOf("<!--This is the login layout-->") == 0) {
-                        alert("The system detects that you have not operated for a long time, please login again");
-                        document.clear();
-                        location.reload();
-                    }
-                    else {
-                        $('#body-content').html(response.data);
-                    }
-                })
-                .catch(error => {
-                    $("#body-content").html(error.response);
-                });
-        },
         Search: _.debounce(
             function () {
                 $('#more').html('Loading...<img style="width: 2rem; height: 2rem; margin-left:1rem" src="/sources/img/loading.gif" alt=""/>');
@@ -260,7 +215,6 @@ var vueCombineMenu = new Vue({
                 }
             }, 500),
         SendSearchRequest: function () {
-
             axios.get(this.url_Search + '/' + this.SearchText)
                 .then(response => {
                     var str = response.data.toString();
@@ -388,6 +342,7 @@ var vueCombineList = new Vue({
                             list.details.pop();
                             list.details.push({
                                 id: 1,
+                                combineid: json.CombineId,
                                 tests: json.TestNames,
                                 sys_per: json.Sys_Permission,
                                 promiex_score: json.Promiex.Score,

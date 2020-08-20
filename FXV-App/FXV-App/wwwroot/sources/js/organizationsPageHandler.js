@@ -1,7 +1,7 @@
 ﻿Vue.component('org-list-item', {
     template: '\
-            <div class="list-item">\
-        <div class="row pointer" v-on:click="$emit(\'to_org_info\')">\
+       <div class="list-item" @click="getOrgInfo(\'/OrganizationInfo/Index?id=\' + org_id)">\
+        <div class="row pointer">\
             <div class="col-lg-2 col-md-3 list-item-img-block">\
                 <img v-bind:src="img_path" />\
             </div>\
@@ -34,6 +34,11 @@
     </div>\
       ',
     props: ['org_id', 'img_path', 'name', 'location', 'manager', 'num_teams', 'num_members'],
+    methods: {
+        getOrgInfo: function (url) {
+            window.location.href = url;
+        }
+    }
 });
 
 var vueOrgMenu = new Vue({
@@ -49,25 +54,6 @@ var vueOrgMenu = new Vue({
     methods: {
         CheckSearchText: function () {
             this.SearchText = this.SearchText.toString().replace(/[\\/<>'"]/g, '');
-        },
-        AddOrg: function () {
-            $('#loading-panel').removeAttr('hidden');
-            axios.get(this.url_Add)
-                .then(response => {
-                    var str = response.data.toString();
-                    if (str.indexOf("<!--This is the login layout-->") == 0) {
-                        alert("The system detects that you have not operated for a long time, please login again");
-                        document.clear();
-                        location.reload();
-                    }
-                    else {
-                        $('#body-content').html(response.data);
-                    }
-                })
-                .catch(error => {
-                    $("#body-content").html(error.response);
-                });
-            $('#loading-panel').attr('hidden', 'hidden');
         },
         Search: _.debounce(
             function () {
@@ -175,37 +161,5 @@ var vueOrgList = new Vue({
                     })
             }
         },
-        ToOrgInfo: function (org_id) {
-            $('#loading-panel').removeAttr('hidden');
-
-            var params = new URLSearchParams();
-            params.append('id', org_id);
-
-            axios.get('/OrganizationInfo/OrganizationInfo', {
-                params: params
-            }).then(response => {
-                var str = response.data.toString();
-                if (str.indexOf("<!--This is the login layout-->") == 0) {
-                    alert("The system detects that you have not operated for a long time, please login again");
-                    document.clear();
-                    location.reload();
-                }
-                else {
-                    try {
-                        var json = JSON.parse(response.data);
-                        if (!json.Result) {
-                            alert(json.Reason);
-                        }
-                    }
-                    catch (e) {
-                        $("#body-content").html(response.data);
-                    }
-                }
-            }).catch(error => {
-                $("#body-content").html(error.response);
-            })
-
-            $('#loading-panel').attr('hidden', 'hidden');
-        }
     },
 });

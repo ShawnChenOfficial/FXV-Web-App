@@ -67,6 +67,7 @@
     <Folder Include="Views\Errors\" />
     <Folder Include="CustomizeControllers\" />
     <Folder Include="ViewModels\NewModels\" />
+    <Folder Include="Views\Activity\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\Shared\_CookieConsentPartial.cshtml" />
@@ -89,6 +90,7 @@
     <Content Remove="wwwroot\static\react\react-dom.min.js" />
     <Content Remove="wwwroot\static\react\react-dom-server.min.js" />
     <Content Remove="wwwroot\static\react\react-with-addons.min.js" />
+    <Content Remove="Views\OrganizationInfo\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />

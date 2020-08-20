@@ -1,8 +1,9 @@
 ﻿@model FXV.ViewModels.CombineBuilder
 
+@{
+    Layout = "_Layout";
+}
 <style>
-
-
     #search_test_category_popup {
         position: fixed;
         top: 40%;
@@ -66,7 +67,7 @@
                                 <label asp-for="Gender" class="control-label text-white"></label>
                                 @if (!Model.Editable)
                                 {
-                                    <input asp-for="Gender" class="form-control-disabled" readonly/>
+                                    <input asp-for="Gender" class="form-control-disabled" readonly />
                                 }
                                 @if (Model.Editable)
                                 {
@@ -174,7 +175,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-xl-5 pt-4">
-                            <img id="combineImg" class="w-100" src="@Model.Img_Path" style="object-fit: contain;" alt=""/>
+                            <img id="combineImg" class="w-100" src="@Model.Img_Path" style="object-fit: contain;" alt="" />
                             <div class="pt-2 row">
                                 <h3 asp-for="Image" class="control-label text-white col-12 ml-2">Upload Combine Image</h3>
                                 <input asp-for="Image" type="file" class="col-12 ml-2" name="image" onchange="imgCheck(this)" />

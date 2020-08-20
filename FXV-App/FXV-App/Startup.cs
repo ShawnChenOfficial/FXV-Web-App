@@ -57,6 +57,7 @@ namespace FXV
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseMySql(Configuration.GetConnectionString("MySqlConnection"))
+                //options => options.UseMySql(Configuration.GetConnectionString("MySqlConnectionOnHostingServer"))
                 );
 
 

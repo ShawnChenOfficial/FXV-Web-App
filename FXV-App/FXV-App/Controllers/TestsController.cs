@@ -9,6 +9,7 @@ using FXV.JwtManager;
 using FXV.Models;
 using FXV.TestsFormula;
 using FXV.ViewModels;
+using FXV.ViewModels.NewModels;
 using FXV_App.CustomizeControllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -41,7 +42,7 @@ namespace FXV_App.Controllers
         [Authorize("All")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult Tests()
+        public IActionResult Index()
         {
             return View();
         }
@@ -85,7 +86,7 @@ namespace FXV_App.Controllers
         [Authorize("Admin")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult CreateTests()
+        public IActionResult Create()
         {
             ViewData["CategoryList"] = new SelectList(_dbContext.Test_Category, "TC_id", "Category");
             return View();
@@ -94,7 +95,7 @@ namespace FXV_App.Controllers
         [Authorize("Admin")]
         [Authorize("Permission_All")]
         [HttpPost]
-        public async Task<IActionResult> CreateTests(TestBuilder testBuilder)
+        public async Task<IActionResult> Create(ViewModel_Test testBuilder)
         {
             if (!ModelState.IsValid)
             {
@@ -121,57 +122,22 @@ namespace FXV_App.Controllers
                 {
                     try
                     {
-                        var Img_Path = "";
-
-                        if (testBuilder.Image != null)
-                        {
-                            var date = Request;
-                            var files = Request.Form.Files;
-                            long size = files.Sum(f => f.Length);
-                            string contentRootPath = _hostingEnvironment.ContentRootPath;
-                            IFormFile img = testBuilder.Image;
-
-
-                            if (img.Length > 0)
-                            {
-                                string fileExt = img.FileName;
-
-                                while (fileExt.Contains('.'))
-                                {
-                                    fileExt = fileExt.Substring(fileExt.IndexOf('.') + 1);
-                                }
-
-                                long fileSize = img.Length;
-                                var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
-                                string webRootPath = _hostingEnvironment.WebRootPath;
-                                var filePath = webRootPath + "./sources/testImg/" + newFileName;
-                                using (var stream = new FileStream(filePath, FileMode.Create))
-                                {
-                                    await img.CopyToAsync(stream);
-                                }
-                                Img_Path = "./sources/testImg/" + newFileName;
-                            }
-
-                        }
-                        else if (testBuilder.Image == null)
-                        {
-                            Img_Path = _configuration["TestImgNullString:Value"];
-                        }
-
+                        // requires Database update
                         var test = new Test
                         {
                             Name = testBuilder.Name,
                             Gender = testBuilder.Gender,
                             Description = testBuilder.Description,
-                            Img_Path = Img_Path,
-                            Unit = testBuilder.Measurement_Type,
-                            Measurement_Type = testBuilder.Measurement_Type,
+                            Unit = testBuilder.Unit,
                             LowerResult = testBuilder.LowerResult,
                             HigherResult = testBuilder.HigherResult,
                             LowerScore = testBuilder.LowerScore,
                             HigherScore = testBuilder.HigherScore,
                             Reverse = testBuilder.Reverse,
-                            Visible = testBuilder.Visible,
+                            Public = testBuilder.Public,
+                            IsVerified = testBuilder.IsVerified,
+                            IsSplittable = testBuilder.IsSplittable,
+                            UsedAsSplit = testBuilder.UsedAsSplit,
                             TC_id = testBuilder.CategoryId,
                         };
 
@@ -180,7 +146,7 @@ namespace FXV_App.Controllers
 
                         transaction.Commit();
 
-                        return RedirectToAction("Tests", "Tests");
+                        return RedirectToAction("Index");
                     }
                     catch (Exception)
                     {
@@ -206,9 +172,10 @@ namespace FXV_App.Controllers
                 return Content(JsonConvert.SerializeObject(new { Result = false, Reason = "Test has been deleted." }));
             }
 
-            TestBuilder testBuilder = new TestBuilder
+            // requires Database update
+            ViewModel_Test testBuilder = new ViewModel_Test
             {
-                Test_ID = test.Test_ID,
+                TestId = test.Test_ID,
                 Name = test.Name,
                 Description = test.Description,
                 Gender = test.Gender,
@@ -216,13 +183,12 @@ namespace FXV_App.Controllers
                 HigherScore = test.HigherScore,
                 LowerResult = test.LowerResult,
                 LowerScore = test.LowerScore,
-                Img_Path = test.Img_Path,
                 CategoryId = test.TC_id,
-                Measurement_Type = test.Measurement_Type,
+                Unit = test.Unit,
                 Reverse = test.Reverse,
-                Visible = test.Visible,
-                Organizations = new List<Organization>(),
-                Teams = new List<Team>(),
+                Public = test.Public,
+                IsSplittable = test.IsSplittable,
+                UsedAsSplit = test.UsedAsSplit,
                 RowVersion = test.RowVersion
             };
 
@@ -234,7 +200,7 @@ namespace FXV_App.Controllers
         [Authorize("Admin")]
         [Authorize("Permission_All")]
         [HttpPost]
-        public async Task<IActionResult> Edit(TestBuilder testBuilder)
+        public async Task<IActionResult> Edit(ViewModel_Test testBuilder)
         {
             if (!ModelState.IsValid)
             {
@@ -242,7 +208,7 @@ namespace FXV_App.Controllers
             }
             else
             {
-                var originalTest = await _dbContext.Test.Where(w => w.Test_ID == testBuilder.Test_ID).FirstOrDefaultAsync();
+                var originalTest = await _dbContext.Test.Where(w => w.Test_ID == testBuilder.TestId).FirstOrDefaultAsync();
 
                 if (originalTest == null)
                 {
@@ -253,9 +219,6 @@ namespace FXV_App.Controllers
 
                 try
                 {
-                    var New_Img_Path = originalTest.Img_Path;
-
-
                     var ToUpdateRelevantResults = originalTest.LowerScore != testBuilder.LowerScore
                                        || originalTest.LowerResult != testBuilder.LowerResult
                                        || originalTest.HigherResult != testBuilder.HigherResult
@@ -263,58 +226,31 @@ namespace FXV_App.Controllers
                                        || originalTest.Reverse != testBuilder.Reverse
                                        || originalTest.TC_id != testBuilder.CategoryId;
 
-                    if (testBuilder.Image != null)
-                    {
-                        var date = Request;
-                        var files = Request.Form.Files;
-                        long size = files.Sum(f => f.Length);
-                        string contentRootPath = _hostingEnvironment.ContentRootPath;
-                        IFormFile img = testBuilder.Image;
-
-
-                        if (img.Length > 0)
-                        {
-                            string fileExt = img.FileName;
-
-                            while (fileExt.Contains('.'))
-                            {
-                                fileExt = fileExt.Substring(fileExt.IndexOf('.') + 1);
-                            }
-
-                            long fileSize = img.Length;
-                            var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
-                            string webRootPath = _hostingEnvironment.WebRootPath;
-                            var filePath = webRootPath + "./sources/testImg/" + newFileName;
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await img.CopyToAsync(stream);
-                            }
-                            New_Img_Path = "./sources/testImg/" + newFileName;
-                        }
-
-                    }
-
+                    
                     var entry = _dbContext.Entry(originalTest);
 
                     entry.Property("RowVersion").OriginalValue = testBuilder.RowVersion;
 
-                    if (await TryUpdateModelAsync<Test>(originalTest, "", e => e.Name, e => e.Gender, e => e.Description, e => e.Unit, e => e.Measurement_Type, e => e.LowerResult, e => e.LowerScore, e => e.HigherResult, e => e.HigherScore, e => e.Reverse, e => e.Visible, e => e.TC_id))
+                    //require db update
+                    if (await TryUpdateModelAsync<Test>(originalTest, "", e => e.Name, e => e.Gender, e => e.Description, e => e.Unit, e => e.LowerResult, e => e.LowerScore, e => e.HigherResult, e => e.HigherScore, e => e.Reverse, e => e.Public, e => e.TC_id, e => e.IsVerified ,e => e.IsSplittable, e => e.UsedAsSplit))
                     {
                         try
                         {
+                            //require db update
                             originalTest.Name = testBuilder.Name;
                             originalTest.Gender = testBuilder.Gender;
                             originalTest.Description = testBuilder.Description;
-                            originalTest.Unit = testBuilder.Measurement_Type;
-                            originalTest.Measurement_Type = testBuilder.Measurement_Type;
+                            originalTest.Unit = testBuilder.Unit;
                             originalTest.LowerResult = testBuilder.LowerResult;
                             originalTest.HigherResult = testBuilder.HigherResult;
                             originalTest.LowerScore = testBuilder.LowerScore;
                             originalTest.HigherScore = testBuilder.HigherScore;
                             originalTest.Reverse = testBuilder.Reverse;
-                            originalTest.Visible = testBuilder.Visible;
+                            originalTest.Public = testBuilder.Public;
                             originalTest.TC_id = testBuilder.CategoryId;
-                            originalTest.Img_Path = New_Img_Path;
+                            originalTest.IsVerified = testBuilder.IsVerified;
+                            originalTest.IsSplittable = testBuilder.IsSplittable;
+                            originalTest.UsedAsSplit = testBuilder.UsedAsSplit;
 
                             _dbContext.Test.Update(originalTest);
                             await _dbContext.SaveChangesAsync();
@@ -470,7 +406,7 @@ namespace FXV_App.Controllers
                                 }
                             }
 
-                            return View("Tests");
+                            return View("Index");
                         }
                         catch (DbUpdateConcurrencyException ex)
                         {
@@ -505,7 +441,6 @@ namespace FXV_App.Controllers
                                     "Try again, and if the problem persists, " +
                                     "see your system administrator.");
 
-                        testBuilder.Img_Path = originalTest.Img_Path;
                         ViewData["CategoryList"] = new SelectList(_dbContext.Test_Category.ToList(), "TC_id", "Category", testBuilder.CategoryId);
 
                         return View(testBuilder);
@@ -517,7 +452,6 @@ namespace FXV_App.Controllers
                                 "Try again, and if the problem persists, " +
                                 "see your system administrator.");
 
-                    testBuilder.Img_Path = originalTest.Img_Path;
                     ViewData["CategoryList"] = new SelectList(_dbContext.Test_Category.ToList(), "TC_id", "Category", testBuilder.CategoryId);
 
                     return View(testBuilder);

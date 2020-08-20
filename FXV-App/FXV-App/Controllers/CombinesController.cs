@@ -38,7 +38,7 @@ namespace FXV_App.Controllers
         [Authorize("All")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult Combines()
+        public IActionResult Index()
         {
             return View();
         }
@@ -171,12 +171,12 @@ namespace FXV_App.Controllers
                                 long fileSize = img.Length;
                                 var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                                 string webRootPath = _hostingEnvironment.WebRootPath;
-                                var filePath = webRootPath + "./sources/CombineImg/" + newFileName;
+                                var filePath = webRootPath + "/sources/CombineImg/" + newFileName;
                                 using (var stream = new FileStream(filePath, FileMode.Create))
                                 {
                                     await img.CopyToAsync(stream);
                                 }
-                                New_Img_Path = "./sources/CombineImg/" + newFileName;
+                                New_Img_Path = "/sources/CombineImg/" + newFileName;
                             }
 
                         }
@@ -366,16 +366,14 @@ namespace FXV_App.Controllers
         [Authorize("Admin")]
         [Authorize("Permission_All")]
         [HttpGet]
-        public IActionResult CreateCombines(int event_id)
+        public IActionResult Create()
         {
-            ViewData["Event_ID"] = event_id;
-
             return View();
         }
         [Authorize("Admin")]
         [Authorize("Permission_All")]
         [HttpPost]
-        public async Task<IActionResult> CreateCombines(CombineBuilder combineBuilder, string cate_weight_pair)
+        public async Task<IActionResult> Create(CombineBuilder combineBuilder, string cate_weight_pair)
         {
             var success = false;
 
@@ -411,12 +409,12 @@ namespace FXV_App.Controllers
                                 long fileSize = img.Length;
                                 var newFileName = System.Guid.NewGuid().ToString() + "." + fileExt;
                                 string webRootPath = _hostingEnvironment.WebRootPath;
-                                var filePath = webRootPath + "./sources/combineImg/" + newFileName;
+                                var filePath = webRootPath + "/sources/combineImg/" + newFileName;
                                 using (var stream = new FileStream(filePath, FileMode.Create))
                                 {
                                     await img.CopyToAsync(stream);
                                 }
-                                Img_Path = "./sources/combineImg/" + newFileName;
+                                Img_Path = "/sources/combineImg/" + newFileName;
                             }
                         }
                         else if (combineBuilder.Image == null)

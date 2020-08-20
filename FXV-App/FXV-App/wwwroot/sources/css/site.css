@@ -562,6 +562,13 @@ table > tbody > tr > td {
     transform: rotateZ(-90deg);
 }
 
+.rotateZ-positive-90 {
+    transform: rotateZ(90deg);
+}
+.rotateZ-positive-180 {
+    transform: rotateZ(180deg);
+}
+
 .sidebar {
     transform: translate3d(-288px,0,0) !important;
     width: 260px !important;
